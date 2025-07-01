@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -5,6 +7,5 @@
 }
 
 body, html {
-  font-family: "Open Sans", sans-serif;
   color: #262626;
 }

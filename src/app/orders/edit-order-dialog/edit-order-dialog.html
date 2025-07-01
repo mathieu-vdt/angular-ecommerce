@@ -1,0 +1,25 @@
+<p-dialog header="Edit Order" [(visible)]="visible" [modal]="true" [closable]="false" styleClass="w-96">
+  <div class="p-fluid">
+    <div class="field">
+      <label for="customer">Customer</label>
+      <input id="customer" type="text" pInputText [(ngModel)]="formData.customer" />
+    </div>
+
+    <div class="field">
+      <label for="total">Total</label>
+      <input id="total" type="number" pInputText [(ngModel)]="formData.total" />
+    </div>
+
+    <div class="field">
+      <label for="status">Status</label>
+      <input id="status" type="text" pInputText [(ngModel)]="formData.status" />
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-end gap-2">
+        <p-button label="Cancel" severity="secondary" (click)="onCancel()" />
+        <p-button label="Save" (click)="onSave()" />
+    </div>
+  </ng-template>
+</p-dialog>

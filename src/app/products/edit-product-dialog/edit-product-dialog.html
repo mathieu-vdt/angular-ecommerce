@@ -1,0 +1,25 @@
+<p-dialog header="Edit Product" [(visible)]="visible" [modal]="true" [closable]="false" styleClass="w-96">
+  <div class="p-fluid">
+    <div class="field">
+      <label for="name">Name</label>
+      <input id="name" type="text" pInputText [(ngModel)]="formData.name" />
+    </div>
+
+    <div class="field">
+      <label for="price">Price</label>
+      <input id="price" type="number" pInputText [(ngModel)]="formData.price" />
+    </div>
+
+    <div class="field">
+      <label for="category">Category</label>
+      <input id="category" type="text" pInputText [(ngModel)]="formData.category" />
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-end gap-2">
+        <p-button label="Cancel" severity="secondary" (click)="onCancel()" />
+        <p-button label="Save" (click)="onSave()" />
+    </div>
+  </ng-template>
+</p-dialog>

@@ -1,0 +1,89 @@
+<p-panel header="Orders">
+  <p-table
+    #dt
+    [value]="orders"
+    [paginator]="true"
+    [rows]="5"
+    [rowsPerPageOptions]="[5, 10, 20]"
+    [globalFilterFields]="['id', 'customer', 'total', 'status']"
+    [tableStyle]="{ 'min-width': '50rem' }"
+  >
+    <ng-template pTemplate="caption">
+      <div class="globalSearch">
+        <input
+          #globalFilter
+          pInputText
+          type="text"
+          (input)="dt?.filterGlobal(globalFilter.value, 'contains')"
+          placeholder="Global Search"
+        />
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="id">
+          ID
+          <p-sortIcon field="id" />
+        </th>
+        <th>
+          Customer
+          <p-columnFilter type="text" field="customer" display="menu" />
+        </th>
+        <th>
+          Total
+          <p-columnFilter type="text" field="total" display="menu" />
+        </th>
+        <th>
+          Status
+          <p-columnFilter field="status" matchMode="in" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false">
+            <ng-template #filter let-filter="filterCallback">
+              <p-multiselect
+                [(ngModel)]="selectedCategories"
+                [options]="status"
+                placeholder="Any"
+                (onChange)="filter($event.value)"
+                [style]="{ 'min-width': '14rem' }"
+                [panelStyle]="{ minWidth: '16rem' }"
+              >
+                <ng-template let-option #item>
+                  <div class="flex items-center gap-2">
+                    <span>{{ option.label }}</span>
+                  </div>
+                </ng-template>
+              </p-multiselect>
+            </ng-template>
+          </p-columnFilter>
+        </th>
+        <th>Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-order>
+      <tr>
+        <td>{{ order.id }}</td>
+        <td>{{ order.customer }}</td>
+        <td>{{ order.total }} €</td>
+        <td>{{ order.status }}</td>
+        <td>
+          <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" styleClass="p-button-secondary" (click)="editOrder(order)"></p-button>
+          <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger" (onClick)="confirmDelete(order)"></p-button>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="5">No orders found.</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-panel>
+
+<p-confirmDialog></p-confirmDialog>
+
+<app-edit-order-dialog
+  [order]="selectedOrder"
+  [(visible)]="editDialogVisible"
+  (save)="onOrderSaved($event)"
+  (cancel)="editDialogVisible = false"
+></app-edit-order-dialog>
+
+<router-outlet></router-outlet>
