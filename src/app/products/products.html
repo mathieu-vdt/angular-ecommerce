@@ -1,5 +1,11 @@
 <p-panel header="Products">
-  <p-dataview #dv [value]="products" [layout]="layout">
+  <p-dataview #dv 
+  [value]="products" 
+  [layout]="layout"
+  [paginator]="true"
+  [rows]="8"
+  [rowsPerPageOptions]="[8, 16, 24]"
+  >
       <ng-template #header>
           <div class="flex justify-end">
               <p-selectbutton [(ngModel)]="layout" [options]="options" [allowEmpty]="false">
@@ -36,7 +42,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="flex flex-col md:items-end gap-8">
+                    <div class="flex flex-col md:ite</div>ms-end gap-8">
                         <span class="text-xl font-semibold text-surface-900 dark:text-surface-0">{{
                             '$' + item.price
                         }}</span>
@@ -51,11 +57,11 @@
       </ng-template>
       <ng-template #grid let-items>
         <div class="grid grid-cols-12 gap-4">
-          <div *ngFor="let product of items" class="col-span-12 sm:col-span-6 md:col-span-4 xl:col-span-6 p-2">
+          <div *ngFor="let product of items" class="col-span-12 sm:col-span-6 md:col-span-4 xl:col-span-3 p-2">
             <p-card>
-              <ng-template #header>
-                <img alt="Card" class="w-60 justify-self-center rounded" [src]="'https://primefaces.org/cdn/primeng/images/demo/product/' + product.image" />
-              </ng-template>
+              <div>
+                <img alt="Card" class="w-100 justify-self-center rounded" [src]="'https://primefaces.org/cdn/primeng/images/demo/product/' + product.image" />
+              </div>
               <div class="flex flex-col items-center gap-2 py-2">
                 <div class="text-lg font-medium">{{ product.name }}</div>
                 <div class="text-secondary text-sm">{{ product.category }}</div>
