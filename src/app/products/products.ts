@@ -63,15 +63,14 @@ export class Products implements OnInit{
   loadProducts(): void {
     this.productService.getProducts().subscribe((data) => {
       this.products = data;
-      console.log('Products loaded:', this.products);
     });
   }
 
   editProduct(product: any) {
+    console.log('Editing product:', product);
     this.selectedProduct = product;
     this.editDialogVisible = true;
   }
-
   onProductSaved(updatedProduct: any) {
     // Met à jour la liste des produits
     const index = this.products.findIndex(p => p.id === updatedProduct.id);

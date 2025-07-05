@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { InputText } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
+import { Product } from '../../models/product.model';
 
 @Component({
   standalone: true,
@@ -17,10 +18,10 @@ import { ButtonModule } from 'primeng/button';
   styleUrls: ['./edit-product-dialog.scss']
 })
 export class EditProductDialog implements OnChanges {
-  @Input() product: any = null;
+  @Input() product: Product | null = null;
   @Input() visible: boolean = false;
 
-  @Output() save = new EventEmitter<any>();
+  @Output() save = new EventEmitter<Product>();
   @Output() cancel = new EventEmitter<void>();
   @Output() visibleChange = new EventEmitter<boolean>();
 
@@ -28,7 +29,7 @@ export class EditProductDialog implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['product'] && this.product) {
-      this.formData = { ...this.product }; // Clone pour ne pas modifier directement l'original
+      this.formData = { ...this.product };
     }
   }
   
