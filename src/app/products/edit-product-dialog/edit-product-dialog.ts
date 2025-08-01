@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { InputText } from 'primeng/inputtext';
@@ -27,9 +27,12 @@ export class EditProductDialog implements OnChanges {
 
   formData: any = {};
 
+  constructor(private cdRef: ChangeDetectorRef) {}
+
   ngOnChanges(changes: SimpleChanges) {
     if (changes['product'] && this.product) {
       this.formData = { ...this.product };
+      this.cdRef.detectChanges();
     }
   }
   

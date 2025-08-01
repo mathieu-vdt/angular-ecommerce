@@ -16,6 +16,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { Card } from 'primeng/card';
 import { ProductService } from '../services/product.service';
 import { Product } from '../models/product.model';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   standalone: true,
@@ -53,7 +54,8 @@ export class Products implements OnInit{
 
   constructor(
     private productService: ProductService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private cdRef: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -72,11 +74,10 @@ export class Products implements OnInit{
     this.editDialogVisible = true;
   }
   onProductSaved(updatedProduct: any) {
-    // Met à jour la liste des produits
-    const index = this.products.findIndex(p => p.id === updatedProduct.id);
-    if (index !== -1) {
-      this.products[index] = { ...updatedProduct };
-    }
+    this.products = this.products.map(p =>
+      p.id === updatedProduct.id ? { ...updatedProduct } : p
+    );
+    this.cdRef.detectChanges();
     this.editDialogVisible = false;
   }
     
@@ -103,9 +104,6 @@ export class Products implements OnInit{
   }
 
   deleteProduct(product: any) {
-    const index = this.products.findIndex(o => o.id === product.id);
-    if (index !== -1) {
-      this.products.splice(index, 1);
-    }
+    this.products = this.products.filter(o => o.id !== product.id);
   }
 }
