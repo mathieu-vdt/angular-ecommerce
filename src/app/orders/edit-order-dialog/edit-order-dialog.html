@@ -1,26 +1,30 @@
 <p-dialog header="Edit Order" [(visible)]="visible" [modal]="true" [closable]="false" styleClass="w-96">
-  <div class="p-fluid">
+  <div class="p-fluid space-y-4">
+    <!-- Customer Field -->
     <div class="field">
-      <label for="customer">Customer</label>
-      <input id="customer" type="text" pInputText [(ngModel)]="formData.customer" />
+      <label for="customer" class="block text-sm font-semibold text-gray-800">Customer</label>
+      <input id="customer" type="text" pInputText [(ngModel)]="formData.customer" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
     </div>
 
+    <!-- Total Field -->
     <div class="field">
-      <label for="total">Total</label>
-      <input id="total" type="number" pInputText [(ngModel)]="formData.total" />
+      <label for="total" class="block text-sm font-semibold text-gray-800">Total</label>
+      <input id="total" type="number" pInputText [(ngModel)]="formData.total" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
     </div>
 
+    <!-- Status Field -->
     <div class="field">
-      <label for="status">Status</label>
-      <p-dropdown 
+      <label for="status" class="block text-sm font-semibold text-gray-800">Status</label>
+      <p-select 
         id="status" 
         [(ngModel)]="formData.status" 
         [options]="statusOptions" 
         optionLabel="label" 
         optionValue="value"
         placeholder="Select Status"
-        appendTo="body">
-      </p-dropdown>
+        appendTo="body"
+        class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+      </p-select>
     </div>
   </div>
 

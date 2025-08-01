@@ -5,7 +5,8 @@ import { InputText } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { Product } from '../../models/product.model';
 import { Category } from '../../models/category.model';
-import { DropdownModule } from 'primeng/dropdown';
+
+import { SelectModule } from 'primeng/select';
 import { CategoryService } from '../../services/category.service';
 
 @Component({
@@ -17,7 +18,7 @@ import { CategoryService } from '../../services/category.service';
     InputText,
     ButtonModule,
     FormsModule,
-    DropdownModule
+    SelectModule
   ],
   styleUrls: ['./edit-product-dialog.scss']
 })
@@ -34,10 +35,11 @@ export class EditProductDialog implements OnChanges {
 
   constructor(
     private cdRef: ChangeDetectorRef,
-    private categoryService: CategoryService
+    private categoryService: CategoryService  // Injecter le service
   ) {}
 
   ngOnInit() {
+    // Charger les catégories au moment du montage du composant
     this.categoryService.getCategories().subscribe((data) => {
       this.categories = data;
     });
@@ -46,16 +48,23 @@ export class EditProductDialog implements OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     if (changes['product'] && this.product) {
       this.formData = { ...this.product };
-      this.formData.category = this.product.category;
+
+      // Assigner l'ID de la catégorie dans formData.idCategory
+      if (this.product.idCategory) {
+        this.formData.idCategory = this.product.idCategory;  // Utilisation de idCategory
+      }
+
       this.cdRef.detectChanges();
     }
   }
 
   onSave() {
-    const selectedCategory = this.categories.find(category => category.id === this.formData.category.id);
+    const selectedCategory = this.categories.find(category => category.id === this.formData.idCategory);
     if (selectedCategory) {
-      this.formData.category = selectedCategory;
+      this.formData.idCategory = selectedCategory.id;
     }
+
+    // Émettre les données du produit avec idCategory
     this.save.emit(this.formData);
   }
 

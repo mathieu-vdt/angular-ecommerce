@@ -4,7 +4,7 @@ import { DialogModule } from 'primeng/dialog';
 import { InputText } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { Order } from '../../models/order.model';  // Importation de l'interface
-import { DropdownModule } from 'primeng/dropdown';  // Importation du module Dropdown
+import { SelectModule } from 'primeng/select';
 
 @Component({
   standalone: true,
@@ -15,7 +15,7 @@ import { DropdownModule } from 'primeng/dropdown';  // Importation du module Dro
     InputText,
     ButtonModule,
     FormsModule,
-    DropdownModule
+    SelectModule
   ],
   styleUrls: ['./edit-order-dialog.scss']
 })

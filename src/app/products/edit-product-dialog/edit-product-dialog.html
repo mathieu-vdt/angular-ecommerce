@@ -1,26 +1,30 @@
 <p-dialog header="Edit Product" [(visible)]="visible" [modal]="true" [closable]="false" styleClass="w-96">
-  <div class="p-fluid">
+  <div class="p-fluid space-y-4">
+    <!-- Name Field -->
     <div class="field">
-      <label for="name">Name</label>
-      <input id="name" type="text" pInputText [(ngModel)]="formData.name" />
+      <label for="name" class="block text-sm font-semibold text-gray-800">Name</label>
+      <input id="name" type="text" pInputText [(ngModel)]="formData.name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
     </div>
 
+    <!-- Price Field -->
     <div class="field">
-      <label for="price">Price</label>
-      <input id="price" type="number" pInputText [(ngModel)]="formData.price" />
+      <label for="price" class="block text-sm font-semibold text-gray-800">Price</label>
+      <input id="price" type="number" pInputText [(ngModel)]="formData.price" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
     </div>
 
+    <!-- Category Field -->
     <div class="field">
-      <label for="category">Category</label>
-      <p-dropdown 
+      <label for="category" class="block text-sm font-semibold text-gray-800">Category</label>
+      <p-select 
         id="category" 
-        [(ngModel)]="formData.category.id" 
+        [(ngModel)]="formData.idCategory" 
         [options]="categories" 
         optionLabel="name" 
         optionValue="id"
         placeholder="Select Category"
-        appendTo="body">
-      </p-dropdown>
+        appendTo="body"
+        class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+      ></p-select>
     </div>
   </div>
 

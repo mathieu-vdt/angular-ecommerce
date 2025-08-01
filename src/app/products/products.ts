@@ -17,6 +17,8 @@ import { Card } from 'primeng/card';
 import { ProductService } from '../services/product.service';
 import { Product } from '../models/product.model';
 import { ChangeDetectorRef } from '@angular/core';
+import { CategoryService } from '../services/category.service';
+import { Category } from '../models/category.model';
 
 @Component({
   standalone: true,
@@ -39,14 +41,8 @@ export class Products implements OnInit{
     { label: 'List', value: 'list', icon: 'pi pi-bars' },
     { label: 'Grid', value: 'grid', icon: 'pi pi-table' }
   ];
-
-  categories = [
-    { label: 'All', value: null },
-    { label: 'Electronics', value: 'electronics' },
-    { label: 'Books', value: 'books' },
-    { label: 'Clothing', value: 'clothing' }
-  ];
     
+  categories: Category[] = [];
   selectedCategories: any[] = [];
   products: Product[] = [];
   selectedProduct: Product | null = null;
@@ -55,16 +51,24 @@ export class Products implements OnInit{
   constructor(
     private productService: ProductService,
     private confirmationService: ConfirmationService,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    private categoryService: CategoryService
   ) {}
 
+
   ngOnInit(): void {
+    this.categoryService.getCategories().subscribe((data) => {
+      this.categories = data;
+    });
     this.loadProducts();
   }
 
   loadProducts(): void {
     this.productService.getProducts().subscribe((data) => {
-      this.products = data;
+      this.products = data.map(product => {
+        const category = this.categories.find(c => c.id === product.idCategory);
+        return { ...product, category };
+      });
     });
   }
 
@@ -73,9 +77,11 @@ export class Products implements OnInit{
     this.editDialogVisible = true;
   }
   onProductSaved(updatedProduct: any) {
-    this.products = this.products.map(p =>
-      p.id === updatedProduct.id ? { ...updatedProduct } : p
-    );
+    this.products = this.products.map(product => 
+    product.id === updatedProduct.id 
+      ? { ...updatedProduct, category: this.categories.find(c => c.id === updatedProduct.idCategory) } 
+      : product
+  );
     this.cdRef.detectChanges();
     this.editDialogVisible = false;
   }
