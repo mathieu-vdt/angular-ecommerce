@@ -12,7 +12,15 @@
 
     <div class="field">
       <label for="status">Status</label>
-      <input id="status" type="text" pInputText [(ngModel)]="formData.status" />
+      <p-dropdown 
+        id="status" 
+        [(ngModel)]="formData.status" 
+        [options]="statusOptions" 
+        optionLabel="label" 
+        optionValue="value"
+        placeholder="Select Status"
+        appendTo="body">
+      </p-dropdown>
     </div>
   </div>
 

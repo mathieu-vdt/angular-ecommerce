@@ -69,7 +69,6 @@ export class Products implements OnInit{
   }
 
   editProduct(product: any) {
-    console.log('Editing product:', product);
     this.selectedProduct = product;
     this.editDialogVisible = true;
   }

@@ -13,6 +13,7 @@ import { ButtonModule } from 'primeng/button';
 import { EditOrderDialog } from './edit-order-dialog/edit-order-dialog';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
+import { Order } from '../models/order.model';  // Importation de l'interface
 
 @Component({
   selector: 'app-orders',
@@ -24,7 +25,7 @@ import { ConfirmationService } from 'primeng/api';
 export class Orders {
   protected title = 'back-office - Orders';
 
-  orders = [
+  orders: Order[] = [  // Utilisation de l'interface Order ici
     { id: 1, customer: 'Customer 1', total: 100, status: 'Pending' },
     { id: 2, customer: 'Customer 2', total: 150, status: 'Shipped' },
     { id: 3, customer: 'Customer 3', total: 200, status: 'Delivered' },
@@ -46,15 +47,15 @@ export class Orders {
   
   selectedCategories: any[] = [];
 
-  selectedOrder: any = null;
+  selectedOrder: Order | null = null;  // Utilisation de l'interface Order ici
   editDialogVisible: boolean = false;
 
-  editOrder(order: any) {
+  editOrder(order: Order) {
     this.selectedOrder = order;
     this.editDialogVisible = true;
   }
 
-  onOrderSaved(updatedOrder: any) {
+  onOrderSaved(updatedOrder: Order) {
     const index = this.orders.findIndex(p => p.id === updatedOrder.id);
     if (index !== -1) {
       this.orders[index] = { ...updatedOrder };
@@ -64,7 +65,7 @@ export class Orders {
 
   constructor(private confirmationService: ConfirmationService) {}
 
-  confirmDelete(order: any) {
+  confirmDelete(order: Order) {
     this.confirmationService.confirm({
       message: 'Do you really want to delete this order?',
       header: 'Confirmation',
@@ -86,7 +87,7 @@ export class Orders {
     });
   }
 
-  deleteOrder(order: any) {
+  deleteOrder(order: Order) {
     const index = this.orders.findIndex(o => o.id === order.id);
     if (index !== -1) {
       this.orders.splice(index, 1);

@@ -12,7 +12,15 @@
 
     <div class="field">
       <label for="category">Category</label>
-      <input id="category" type="text" pInputText [(ngModel)]="formData.category" />
+      <p-dropdown 
+        id="category" 
+        [(ngModel)]="formData.category.id" 
+        [options]="categories" 
+        optionLabel="name" 
+        optionValue="id"
+        placeholder="Select Category"
+        appendTo="body">
+      </p-dropdown>
     </div>
   </div>
 
