@@ -13,7 +13,9 @@ import { ButtonModule } from 'primeng/button';
 import { EditOrderDialog } from './edit-order-dialog/edit-order-dialog';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
-import { Order } from '../models/order.model';  // Importation de l'interface
+import { Order } from '../models/order.model';
+import { OrderService } from '../services/order.service';
+import { Product } from '../models/product.model';
 
 @Component({
   selector: 'app-orders',
@@ -25,18 +27,10 @@ import { Order } from '../models/order.model';  // Importation de l'interface
 export class Orders {
   protected title = 'back-office - Orders';
 
-  orders: Order[] = [  // Utilisation de l'interface Order ici
-    { id: 1, customer: 'Customer 1', total: 100, status: 'Pending' },
-    { id: 2, customer: 'Customer 2', total: 150, status: 'Shipped' },
-    { id: 3, customer: 'Customer 3', total: 200, status: 'Delivered' },
-    { id: 4, customer: 'Customer 4', total: 250, status: 'Cancelled' },
-    { id: 5, customer: 'Customer 5', total: 300, status: 'Pending' },
-    { id: 6, customer: 'Customer 6', total: 350, status: 'Shipped' },
-    { id: 7, customer: 'Customer 7', total: 400, status: 'Delivered' },
-    { id: 8, customer: 'Customer 8', total: 450, status: 'Cancelled' },
-    { id: 9, customer: 'Customer 9', total: 500, status: 'Pending' },
-    { id: 10, customer: 'Customer 10', total: 550, status: 'Shipped' }
-  ];
+  orders: Order[] = [];
+  expandedRows = {};
+  orderItems: { [key: number]: Product[] } = {};
+
 
   status = [
     { label: 'Pending', value: 'Pending' },
@@ -49,6 +43,16 @@ export class Orders {
 
   selectedOrder: Order | null = null;  // Utilisation de l'interface Order ici
   editDialogVisible: boolean = false;
+
+  ngOnInit(): void {
+    this.loadOrders();  // Charge les commandes au démarrage
+  }
+
+  loadOrders() {
+    this.orderService.getOrders().subscribe((orders: Order[]) => {
+      this.orders = orders;
+    });
+  }
 
   editOrder(order: Order) {
     this.selectedOrder = order;
@@ -63,7 +67,7 @@ export class Orders {
     this.editDialogVisible = false;
   }
 
-  constructor(private confirmationService: ConfirmationService) {}
+  constructor(private confirmationService: ConfirmationService, private orderService: OrderService) {}
 
   confirmDelete(order: Order) {
     this.confirmationService.confirm({
@@ -92,5 +96,18 @@ export class Orders {
     if (index !== -1) {
       this.orders.splice(index, 1);
     }
+  }
+
+  loadOrderItems(orderId: number) {
+    if (!this.orderItems[orderId]) {
+      this.orderService.getItemsOrder(orderId).subscribe((items: Product[]) => {
+        this.orderItems[orderId] = items;
+      });
+    }
+  }
+
+  onRowExpand(event: any) {
+    const orderId = event.data.id;
+    this.loadOrderItems(orderId);
   }
 }

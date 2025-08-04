@@ -7,6 +7,9 @@
     [rowsPerPageOptions]="[5, 10, 20]"
     [globalFilterFields]="['id', 'customer', 'total', 'status']"
     [tableStyle]="{ 'min-width': '50rem' }"
+    dataKey="id"
+    [expandedRowKeys]="expandedRows" 
+    (onRowExpand)="onRowExpand($event)"
   >
     <ng-template pTemplate="caption">
       <div class="globalSearch">
@@ -21,6 +24,7 @@
     </ng-template>
     <ng-template pTemplate="header">
       <tr>
+        <th></th>
         <th pSortableColumn="id">
           ID
           <p-sortIcon field="id" />
@@ -57,15 +61,47 @@
         <th>Actions</th>
       </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-order>
+    <ng-template pTemplate="body" let-order let-expanded="expanded">
       <tr>
+        <td>
+          <p-button type="button" pRipple [pRowToggler]="order" [text]="true" severity="secondary" [rounded]="true" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'" />
+        </td>
         <td>{{ order.id }}</td>
-        <td>{{ order.customer }}</td>
+        <td>{{ order.idCustomer }}</td>
         <td>{{ order.total }} €</td>
         <td>{{ order.status }}</td>
         <td>
           <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" styleClass="p-button-secondary" (click)="editOrder(order)"></p-button>
           <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger" (onClick)="confirmDelete(order)"></p-button>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template #expandedrow let-order>
+      <tr>
+        <td colspan="6">
+          <div class="p-4">
+            <p-table [value]="orderItems[order.id]" dataKey="id">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>Product Name</th>
+                  <th>Price</th>
+                  <th>Quantity</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-item>
+                <tr>
+                  <td>{{ item.name }}</td>
+                  <td>{{ item.price }} €</td>
+                  <td>{{ item.quantity }}</td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage">
+                <tr>
+                  <td colspan="3">No items found.</td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
         </td>
       </tr>
     </ng-template>
