@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of, forkJoin } from 'rxjs';
 import { Order } from '../models/order.model';
-import { OrderItem } from '../models/orderItem.model';
+import { OrderItem, OrderItemProduct } from '../models/orderItem.model';
 import { Product } from '../models/product.model';
 import { ProductService } from './product.service';
 import { map } from 'rxjs/operators';
@@ -42,7 +42,7 @@ export class OrderService {
     ]);
   }
 
-  getItemsOrder(orderId: number): Observable<Product[]> {
+  getItemsOrder(orderId: number): Observable<OrderItemProduct[]> {
     const items = this.orderItems.filter((item) => item.order_id === orderId);
 
     // Utilisation de forkJoin pour attendre que tous les produits soient récupérés

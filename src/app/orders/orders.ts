@@ -15,7 +15,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { Order } from '../models/order.model';
 import { OrderService } from '../services/order.service';
-import { Product } from '../models/product.model';
+import { OrderItemProduct } from '../models/orderItem.model';
 
 @Component({
   selector: 'app-orders',
@@ -29,8 +29,7 @@ export class Orders {
 
   orders: Order[] = [];
   expandedRows = {};
-  orderItems: { [key: number]: Product[] } = {};
-
+  orderItems: { [key: number]: OrderItemProduct[] } = {};
 
   status = [
     { label: 'Pending', value: 'Pending' },
@@ -98,9 +97,20 @@ export class Orders {
     }
   }
 
+  // Fonction pour calculer le total d'une commande
+  getTotalForOrder(orderId: number): number {
+    const items = this.orderItems[orderId];
+
+    if (items && Array.isArray(items)) {
+      return items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    }
+    return 0;
+  }
+
+
   loadOrderItems(orderId: number) {
     if (!this.orderItems[orderId]) {
-      this.orderService.getItemsOrder(orderId).subscribe((items: Product[]) => {
+      this.orderService.getItemsOrder(orderId).subscribe((items: OrderItemProduct[]) => {
         this.orderItems[orderId] = items;
       });
     }

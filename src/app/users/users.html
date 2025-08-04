@@ -1,0 +1,66 @@
+<p-panel header="Users">
+  <p-table
+    #dt
+    [value]="users"
+    [paginator]="true"
+    [rows]="5"
+    [rowsPerPageOptions]="[5, 10, 20]"
+    [globalFilterFields]="['id', 'username', 'email', 'role']"
+    [tableStyle]="{ 'min-width': '50rem' }"
+  >
+    <ng-template pTemplate="caption">
+      <div class="globalSearch">
+        <input
+          #globalFilter
+          pInputText
+          type="text"
+          (input)="dt?.filterGlobal(globalFilter.value, 'contains')"
+          placeholder="Global Search"
+        />
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="id">
+          ID
+          <p-sortIcon field="id" />
+        </th>
+        <th>Username</th>
+        <th>Email</th>
+        <th>Role</th>
+        <th>Actions</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-user>
+      <tr>
+        <td>{{ user.id }}</td>
+        <td>{{ user.username }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.role }}</td>
+        <td>
+          <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" styleClass="p-button-secondary" (click)="editUser(user)"></p-button>
+          <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger" (onClick)="confirmDelete(user)"></p-button>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="6">No users found.</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-panel>
+
+<p-confirmDialog></p-confirmDialog>
+
+<app-edit-user-dialog
+  [user]="selectedUser"
+  [(visible)]="editDialogVisible"
+  (save)="onUserSaved($event)"
+  (cancel)="editDialogVisible = false"
+></app-edit-user-dialog>
+
+<router-outlet></router-outlet>

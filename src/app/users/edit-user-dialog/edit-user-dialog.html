@@ -1,0 +1,65 @@
+<p-dialog header="Edit User" [(visible)]="visible" [modal]="true" [closable]="false" styleClass="w-96">
+  <div class="p-fluid space-y-4">
+    <!-- Username Field -->
+    <div class="field">
+      <label for="username" class="block text-sm font-semibold text-gray-800">Username</label>
+      <input id="username" type="text" pInputText [(ngModel)]="formData.username" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+    </div>
+
+    <!-- Email Field -->
+    <div class="field">
+      <label for="email" class="block text-sm font-semibold text-gray-800">Email</label>
+      <input id="email" type="email" pInputText [(ngModel)]="formData.email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+    </div>
+
+    <!-- Role Field -->
+    <div class="field">
+      <label for="role" class="block text-sm font-semibold text-gray-800">Role</label>
+      <p-select 
+        id="role" 
+        [(ngModel)]="formData.role" 
+        [options]="roleOptions" 
+        optionLabel="label" 
+        optionValue="value"
+        placeholder="Select Role"
+        appendTo="body"
+        class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+      </p-select>
+    </div>
+
+    <!-- Display Customer Specific Fields if Role is Customer -->
+    <div *ngIf="formData.role === 'customer'">
+      <div class="field">
+        <label for="first_name" class="block text-sm font-semibold text-gray-800">First Name</label>
+        <input id="first_name" type="text" pInputText [(ngModel)]="formCustomerData.first_name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+      </div>
+
+      <div class="field">
+        <label for="last_name" class="block text-sm font-semibold text-gray-800">Last Name</label>
+        <input id="last_name" type="text" pInputText [(ngModel)]="formCustomerData.last_name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+      </div>
+
+      <div class="field">
+        <label for="phone_number" class="block text-sm font-semibold text-gray-800">Phone Number</label>
+        <input id="phone_number" type="text" pInputText [(ngModel)]="formCustomerData.phone_number" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+      </div>
+
+      <div class="field">
+        <label for="shipping_address" class="block text-sm font-semibold text-gray-800">Shipping Address</label>
+        <input id="shipping_address" type="text" pInputText [(ngModel)]="formCustomerData.shipping_address" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+      </div>
+
+      <div class="field">
+        <label for="billing_address" class="block text-sm font-semibold text-gray-800">Billing Address</label>
+        <input id="billing_address" type="text" pInputText [(ngModel)]="formCustomerData.billing_address" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+      </div>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-end gap-2">
+        <p-button label="Cancel" severity="secondary" (click)="onCancel()" />
+        <p-button label="Save" (click)="onSave()" />
+    </div>
+  </ng-template>
+</p-dialog>
