@@ -11,16 +11,7 @@
     // border: solid 1px #2626263a;
     justify-content: space-between;
     box-sizing: border-box;
-
-    a{
-        color: #262626;
-        &.active i,
-        &.router-link-active i {
-            color: #f8fafc;
-            background-color: #262626;
-        }
-    }
-
+    
     ul {
         list-style: none;
         padding: 0;
@@ -30,26 +21,92 @@
         &.settings {
             margin-bottom: 10px;
         }
+
+        li {
+            width: 100%;
+            text-align: center;
+            margin-top: 10px;
+            cursor: pointer;
+            color: #718092;
+            transition: background 0.2s, color 0.2s;
+
+            a{
+                color: #262626;
+                &.active i,
+                &.router-link-active i {
+                    color: #f8fafc;
+                    background-color: #262626;
+                }
+
+                i {
+                    font-size: 1rem;
+                    padding: 10px;
+                    border-radius: 7px;
+                    transition: background 0.2s, color 0.2s;
+
+                    &:hover {
+                        color: #2d3748;
+                        background-color: #e2e8f0;
+                    }
+                }
+            }
+        }
     }
 
-    li {
-        width: 100%;
-        text-align: center;
-        margin-top: 10px;
-        cursor: pointer;
-        color: #718092;
-        transition: background 0.2s, color 0.2s;
-    }
+    
 
-    i {
-        font-size: 1rem;
-        padding: 10px;
-        border-radius: 7px;
-        transition: background 0.2s, color 0.2s;
+    
+}
 
-        &:hover {
-            color: #2d3748;
-            background-color: #e2e8f0;
+@media (max-width: 768px) {
+    .sidebar {
+        margin: 0;
+        flex-direction: row;
+        height: 60px;
+        width: calc(100vw - 1rem);
+        display: flex;
+        position: initial;
+        margin: 1rem 0.5rem;
+
+        ul {
+            display: flex;
+            flex-direction: row;
+            padding: 10px;
+            
+            li {
+            width: 100%;
+            text-align: center;
+            margin-top: 10px;
+            cursor: pointer;
+            color: #718092;
+            transition: background 0.2s, color 0.2s;
+
+            a{
+                color: #262626;
+                &.active i,
+                &.router-link-active i {
+                    color: #f8fafc;
+                    background-color: #262626;
+                }
+
+                i {
+                    font-size: 1rem;
+                    padding: 10px;
+                    border-radius: 7px;
+                    transition: background 0.2s, color 0.2s;
+
+                    &:hover {
+                        color: #2d3748;
+                        background-color: #e2e8f0;
+                    }
+                }
+            }
+        }
+            &.settings{
+                li{
+                    text-align: end;
+                }
+            }
         }
     }
 }

@@ -12,3 +12,16 @@
   }
 }
 
+@media (max-width: 768px) {
+  .layout {
+    display: block;
+
+    .content {
+      margin: 1rem;
+      background: #fff;
+      min-width: calc(100vw - 1rem);
+      min-height: auto;
+      overflow-x: auto;
+    }
+  }
+}

@@ -1,7 +1,8 @@
-import { Component, Input, Output, EventEmitter, SimpleChanges, OnChanges  } from '@angular/core';
+import { Component, Input, Output, EventEmitter, SimpleChanges, OnChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { User } from '../../models/user.model';
 import { Customer } from '../../models/customer.model';
+import { UserService } from '../../services/user.service';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
@@ -11,6 +12,7 @@ import { SelectModule } from 'primeng/select';
 @Component({
   selector: 'app-edit-user-dialog',
   templateUrl: './edit-user-dialog.html',
+  styleUrls: ['./edit-user-dialog.scss'],
   imports: [
     DialogModule,
     InputText,
@@ -18,8 +20,7 @@ import { SelectModule } from 'primeng/select';
     FormsModule,
     SelectModule,
     CommonModule
-  ],
-  styleUrls: ['./edit-user-dialog.scss']
+  ]
 })
 export class EditUserDialog implements OnChanges {
   @Input() user: User | null = null;
@@ -37,37 +38,52 @@ export class EditUserDialog implements OnChanges {
     { label: 'Customer', value: 'customer' }
   ];
 
+  constructor(private userService: UserService) {}
+
   ngOnChanges(changes: SimpleChanges) {
-    if (this.user) {
-      // Initialize formData for User fields
+    if (changes['user'] && this.user) {
       this.formData = { ...this.user };
-      
-      // If the user is a customer, initialize customer fields
+
+      // Load customer data if user is a customer
       if (this.formData.role === 'customer') {
-        // We need to manually map User fields to Customer fields
-        this.formCustomerData = {
-          id: this.formData.id,
-          user_id: this.formData.id,
-          first_name: '',
-          last_name: '',
-          phone_number: '',
-          shipping_address: '',
-          billing_address: '',
-          email: this.formData.email,
-          created_at: this.formData.created_at
-        };
+        this.userService.getCustomerByUserId(this.formData.id).subscribe((customer) => {
+          if (customer) {
+            this.formCustomerData = { ...customer };
+          }
+        });
       }
     }
   }
 
-
   onSave() {
-    // If role is 'customer', merge the formData and formCustomerData into one object
     if (this.formData.role === 'customer') {
-      const updatedUser = { ...this.formData, ...this.formCustomerData };
-      this.save.emit(updatedUser);
+      const updatedUser = { ...this.formData };
+      const updatedCustomer = { ...this.formCustomerData };
+      
+      // Save both User and Customer data
+      this.userService.saveUser(updatedUser, updatedCustomer).subscribe({
+        next: () => {
+          this.save.emit(updatedUser);
+        },
+        error: (error) => {
+          console.log('Error saving user and customer', error);
+        },
+        complete: () => {
+          this.save.emit(this.formData);
+        }
+      });
+      
     } else {
-      this.save.emit(this.formData);
+      this.userService.saveUser(this.formData, null).subscribe({
+        next: () => {
+        },
+        error: (error) => {
+          console.log('Error saving user', error);
+        },
+        complete: () => {
+          this.save.emit(this.formData);
+        }
+      });
     }
   }
 
