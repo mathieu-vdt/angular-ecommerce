@@ -1,8 +1,8 @@
 import { Component, Input, Output, EventEmitter, SimpleChanges, OnChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { User } from '../../models/user.model';
-import { Customer } from '../../models/customer.model';
-import { UserService } from '../../services/user.service';
+import { User } from '../../../models/user.model';
+import { Customer } from '../../../models/customer.model';
+import { UserService } from '../../../services/user.service';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';

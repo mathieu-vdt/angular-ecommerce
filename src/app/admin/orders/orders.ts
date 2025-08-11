@@ -13,9 +13,9 @@ import { ButtonModule } from 'primeng/button';
 import { EditOrderDialog } from './edit-order-dialog/edit-order-dialog';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
-import { Order } from '../models/order.model';
-import { OrderService } from '../services/order.service';
-import { OrderItemProduct } from '../models/orderItem.model';
+import { Order } from '../../models/order.model';
+import { OrderService } from '../../services/order.service';
+import { OrderItemProduct } from '../../models/orderItem.model';
 
 @Component({
   selector: 'app-orders',

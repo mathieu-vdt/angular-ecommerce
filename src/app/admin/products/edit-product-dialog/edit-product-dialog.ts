@@ -3,11 +3,11 @@ import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { InputText } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
-import { Product } from '../../models/product.model';
-import { Category } from '../../models/category.model';
+import { Product } from '../../../models/product.model';
+import { Category } from '../../../models/category.model';
 
 import { SelectModule } from 'primeng/select';
-import { CategoryService } from '../../services/category.service';
+import { CategoryService } from '../../../services/category.service';
 
 @Component({
   standalone: true,

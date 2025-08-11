@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { InputText } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
-import { Order } from '../../models/order.model';  // Importation de l'interface
+import { Order } from '../../../models/order.model';  // Importation de l'interface
 import { SelectModule } from 'primeng/select';
 
 @Component({

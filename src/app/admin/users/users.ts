@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { UserService } from '../services/user.service';
-import { User } from '../models/user.model';
+import { UserService } from '../../services/user.service';
+import { User } from '../../models/user.model';
 import { Panel } from 'primeng/panel';
 import { TableModule } from 'primeng/table';
 import { CommonModule } from '@angular/common';

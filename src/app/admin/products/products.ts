@@ -14,11 +14,11 @@ import { SelectButtonModule } from 'primeng/selectbutton';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { Card } from 'primeng/card';
-import { ProductService } from '../services/product.service';
-import { Product } from '../models/product.model';
+import { ProductService } from '../../services/product.service';
+import { Product } from '../../models/product.model';
 import { ChangeDetectorRef } from '@angular/core';
-import { CategoryService } from '../services/category.service';
-import { Category } from '../models/category.model';
+import { CategoryService } from '../../services/category.service';
+import { Category } from '../../models/category.model';
 
 @Component({
   standalone: true,
