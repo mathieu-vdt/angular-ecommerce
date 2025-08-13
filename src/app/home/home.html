@@ -1,9 +1,11 @@
 <main>
     <div class="start-page">
         <img src="assets/background.jpg" alt="" class="bg-image">
+        <img src="assets/clouds/cloud-large.png" alt="" class="large-cloud">
+        <img src="assets/clouds/cloud-large.png" alt="" class="large-cloud-2">
         <app-navbar></app-navbar>
-        <div class="container mx-auto px-4 pt-[20vh]">
-            <h1 class="text-center font-bold text-white mt-10 text-4xl sm:text-9xl md:text-6xl lg:text-9xl opacity-[.6]">Angular E-commerce Platform</h1>
+        <div class="container mx-auto px-4 pt-[8vh] sm:pt-[20vh] ">
+            <h1 class="text-center font-bold text-white mt-2 sm:mt-10 text-4xl sm:text-9xl md:text-6xl lg:text-9xl opacity-[0.8]">Angular E-commerce Platform</h1>
             <p class="text-center text-white mt-4 text-xl sm:text-2xl opacity-[.6]">by Mathieu Vidot</p>
         </div>
     </div>
@@ -33,4 +35,37 @@
             </ul>         
         </div>
    </div>
+   <div class="products mx-[2em]">
+    <p-panel>
+        <p-dataview #dv 
+            [value]="products" 
+            [layout]="grid ? 'grid' : 'list'"
+            [paginator]="true"
+            [rows]="8"
+            [rowsPerPageOptions]="[8, 16, 24]">
+
+            <ng-template #grid let-items>
+            <div class="grid grid-cols-12 gap-4">
+                <div *ngFor="let product of items" class="col-span-12 sm:col-span-6 md:col-span-4 xl:col-span-3 p-2">
+                <p-card>
+                    <div>
+                    <img alt="Card" class="w-100 justify-self-center rounded" [src]="'https://primefaces.org/cdn/primeng/images/demo/product/' + product.image_url" />
+                    </div>
+                    <div class="flex flex-col items-center gap-2 py-2">
+                    <div class="text-lg font-medium">{{ product.name }}</div>
+                    <div class="text-secondary text-sm">{{ product.category?.name }}</div>  <!-- Affichage de la catégorie -->
+                    <div class="text-xl font-semibold">{{ '$' + product.price }}</div>
+                    <div class="flex gap-2 mt-2">
+                        <p-button>Buy now</p-button>
+                        <p-button [rounded]="true" [text]="true" styleClass="p-button-secondary"><i class="pi pi-cart-plus" style="font-size: 1.5rem"></i></p-button>
+                    </div>
+                    </div>
+                </p-card>
+                </div>
+            </div>
+            </ng-template>
+        </p-dataview>
+    </p-panel>
+    </div>
 </main>
+<app-footer></app-footer>

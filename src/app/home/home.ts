@@ -1,15 +1,38 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Navbar } from './navbar/navbar';
+import { DataViewModule  } from 'primeng/dataview';
+import { ProductService } from '../services/product.service';
+import { CategoryService } from '../services/category.service';
+import { Category } from '../models/category.model';
+import { Product } from '../models/product.model';
+import { ButtonModule } from 'primeng/button';
+import { SelectButtonModule } from 'primeng/selectbutton';
+import { TableModule } from 'primeng/table';
+import { InputTextModule } from 'primeng/inputtext';
+import { FormsModule } from '@angular/forms';
+import { DialogModule } from 'primeng/dialog';
+import { Card } from 'primeng/card';
+import { Panel } from 'primeng/panel';
+import { Footer } from './footer/footer';
 
 @Component({
   selector: 'app-home',
-  imports: [CommonModule, Navbar],
+  standalone: true,
+  imports: [
+    Navbar, TableModule, CommonModule, 
+    InputTextModule, FormsModule, DialogModule, 
+    ButtonModule, DataViewModule , 
+    SelectButtonModule,Card, Panel, Footer
+  ],
   templateUrl: './home.html',
-  styleUrl: './home.scss'
+  styleUrls: ['./home.scss']
 })
-export class Home{
+export class Home implements OnInit{
   protected title = 'Ecommerce Angular';
+
+  categories: Category[] = [];
+  products: Product[] = [];
 
   logos = [
     'assets/logos/adidas.svg',
@@ -19,4 +42,25 @@ export class Home{
     'assets/logos/rolex.png',
     'assets/logos/tommy-hilfiger.svg',
   ];
+
+  constructor(
+    private productService: ProductService,
+    private categoryService: CategoryService
+  ) {}
+
+  ngOnInit(): void {
+    this.categoryService.getCategories().subscribe(categories => {
+      this.categories = categories;
+      this.loadProducts();
+    });
+  }
+
+  loadProducts(): void {
+    this.productService.getProducts().subscribe(products => {
+      this.products = products.map(p => ({
+        ...p,
+        category: this.categories.find(c => c.id === p.idCategory)
+      }));
+    });
+  }
 }
