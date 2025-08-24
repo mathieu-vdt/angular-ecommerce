@@ -11,3 +11,34 @@
 body, html {
   color: #262626;
 }
+
+@layer components {
+  ul.navbar-links li a.nav-link {
+    @apply relative rounded font-bold text-white transition duration-200
+           focus:outline-none focus:ring-0;
+
+    /* underline hidden by default */
+  }
+
+  ul.navbar-links li a.nav-link::after {
+    content: '';
+    @apply absolute left-0 -bottom-1 h-[2px] w-0 bg-white transition-all duration-300;
+  }
+
+  ul.navbar-links li a.nav-link:hover::after,
+  ul.navbar-links li a.nav-link:focus-visible::after {
+    @apply w-full;
+  }
+
+  .btn-link {
+    @apply whitespace-nowrap rounded font-medium text-white transition
+           hover:text-white/70 active:text-red-400
+           focus:outline-none focus:ring-0;
+  }
+
+  .btn-primary {
+    @apply whitespace-nowrap rounded-xl border border-white px-3 py-2 font-medium text-white transition
+           hover:bg-white hover:text-[#262626] active:bg-white/80
+           focus:outline-none focus:ring-0;
+  }
+}

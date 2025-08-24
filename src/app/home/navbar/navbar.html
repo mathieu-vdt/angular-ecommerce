@@ -1,26 +1,50 @@
-<header class="text-slate-700 container relative mx-auto flex flex-col overflow-hidden px-4 py-4 lg:flex-row lg:items-center">
-    <a href="/" class="flex items-center whitespace-nowrap text-2xl font-black">
-        <span class="mr-2 w-10">
-            <img src="assets/logoMathieu_black.png" alt="" />
-        </span>
-    </a>
-    <input type="checkbox" class="peer hidden" id="navbar-open" />
-    <label class="absolute top-5 right-5 cursor-pointer lg:hidden" for="navbar-open">
-        <svg class="h-7 w-7" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" color="white">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16"></path>
-        </svg>
-    </label>
-    <nav aria-label="Header Navigation" class="peer-checked:pt-8 peer-checked:max-h-60 flex max-h-0 w-full flex-col items-center overflow-hidden transition-all lg:ml-24 lg:max-h-full lg:flex-row">
-        <ul class="flex w-full flex-col items-center space-y-2 lg:flex-row lg:justify-center lg:space-y-0">
-            <li class="lg:mr-12"><a class="rounded text-white font-bold transition focus:outline-none focus:ring-1 focus:ring-blue-700 focus:ring-offset-2 hover:text-gray" href="#">Home</a></li>
-            <li class="lg:mr-12"><a class="rounded text-white font-bold transition focus:outline-none focus:ring-1 focus:ring-blue-700 focus:ring-offset-2" href="#">Products</a></li>
-            <li class="lg:mr-12"><a class="rounded text-white font-bold transition focus:outline-none focus:ring-1 focus:ring-blue-700 focus:ring-offset-2" href="#">Contact</a></li>
-            <li class="lg:mr-12"><a class="rounded text-white font-bold transition focus:outline-none focus:ring-1 focus:ring-blue-700 focus:ring-offset-2" href="#">FAQ</a></li>
-        </ul>
-        <hr class="mt-4 w-full lg:hidden" />
-        <div class="my-4 flex items-center space-x-6 space-y-2 lg:my-0 lg:ml-auto lg:space-x-8 lg:space-y-0">
-            <a href="#" title="" class="whitespace-nowrap rounded font-medium transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-blue-700 focus:ring-offset-2 hover:text-opacity-50 text-white"> Log in </a>
-            <a href="#" title="" class="whitespace-nowrap rounded-xl bg-transparent border px-3 py-2 font-medium text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-offset-2 hover:bg-white hover:text-[#262626]">Sign In</a>
-        </div>
-    </nav>
+<header class="container relative mx-auto flex items-center justify-between px-4 py-4">
+  <!-- Logo -->
+  <a routerLink="/" class="flex items-center whitespace-nowrap text-2xl font-black lg:mr-8">
+    <span class="mr-2 w-10">
+      <img src="assets/logoMathieu_black.png" alt="Logo" />
+    </span>
+  </a>
+
+  <!-- Toggle checkbox (mobile) -->
+  <input #navOpen type="checkbox" id="nav-open" class="peer sr-only" />
+
+  <!-- Burger (mobile only) -->
+  <label for="nav-open" class="cursor-pointer lg:hidden">
+    <svg class="h-7 w-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+            d="M4 6h16M4 12h16M4 18h16"/>
+    </svg>
+  </label>
+
+  <!-- Backdrop (mobile only) -->
+  <label for="nav-open"
+         class="fixed inset-0 z-40 bg-black/50 opacity-0 pointer-events-none transition
+                peer-checked:opacity-100 peer-checked:pointer-events-auto lg:hidden"></label>
+
+  <!-- Nav (mobile drawer / desktop flex) -->
+  <nav aria-label="Header Navigation"
+       class="fixed left-0 top-0 z-50 h-screen w-80 max-w-[85%] -translate-x-full bg-[#0b0f14]/90 backdrop-blur
+              px-6 py-6 transition-transform duration-300
+              peer-checked:translate-x-0
+              lg:static lg:h-auto lg:w-full lg:translate-x-0 lg:bg-transparent lg:backdrop-blur-0 lg:px-0 lg:py-0
+              lg:flex lg:items-center lg:justify-between">
+
+    <!-- Links (center on desktop) -->
+    <ul class="flex flex-col gap-4 navbar-links lg:flex-row lg:gap-10 lg:mx-auto">
+      <li><a (click)="close()" routerLink="/" class="nav-link">Home</a></li>
+      <li><a (click)="close()" routerLink="/products" class="nav-link">Products</a></li>
+      <li><a (click)="close()" routerLink="/contact" class="nav-link">Contact</a></li>
+      <li><a (click)="close()" routerLink="/faq" class="nav-link">FAQ</a></li>
+    </ul>
+
+    <!-- Separator mobile -->
+    <hr class="my-6 border-white/20 lg:hidden" />
+
+    <!-- Actions (right on desktop) -->
+    <div class="mt-4 flex flex-col gap-3 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
+      <a (click)="close()" routerLink="/login" class="btn-link">Log in</a>
+      <a (click)="close()" routerLink="/register" class="btn-primary">Sign In</a>
+    </div>
+  </nav>
 </header>

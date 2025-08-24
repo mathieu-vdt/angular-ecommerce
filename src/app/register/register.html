@@ -1,0 +1,83 @@
+<img src="assets/background.jpg" alt="" class="bg-image" />
+<a routerLink="/" class="absolute top-4 left-4 z-10 flex items-center">
+    <img src="assets/logoMathieu_black.png" alt="Logo" class="h-7 sm:h-8 w-auto" />
+</a>
+<div class="flex justify-center items-center min-h-screen">
+  <p-card styleClass="w-full max-w-md glass-card  m-3">
+    <h1 class="flex justify-center items-center text-2xl font-bold">Create an account</h1>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" novalidate>
+      <div class="p-fluid">
+        <!-- Full name -->
+        <div class="field mb-4">
+          <label for="fullname" class="block mb-2">Full Name</label>
+          <input id="fullname" type="text" pInputText formControlName="fullname" class="w-full glass-input" />
+          <small class="text-red-400"
+       *ngIf="f['fullname'].invalid && (f['fullname'].dirty || f['fullname'].touched || submitted)">
+  Full name is required.
+</small>
+        </div>
+
+        <!-- Email -->
+        <div class="field mb-4">
+          <label for="email" class="block mb-2">Email</label>
+          <input id="email" type="email" pInputText formControlName="email" class="w-full glass-input" />
+          <small class="text-red-400"
+                 *ngIf="f.email.errors?.['required'] && (f.email.dirty || f.email.touched || submitted)">
+            Email is required.
+          </small>
+          <small class="text-red-400"
+                 *ngIf="f.email.errors?.['email'] && (f.email.dirty || f.email.touched || submitted)">
+            Please enter a valid email.
+          </small>
+        </div>
+
+        <!-- Password -->
+        <div class="field mb-4">
+          <label for="password" class="block mb-2">Password</label>
+          <input id="password" type="password" pInputText formControlName="password" class="w-full glass-input" />
+          <small class="text-red-400"
+                 *ngIf="f.password.errors?.['required'] && (f.password.dirty || f.password.touched || submitted)">
+            Password is required.
+          </small>
+          <small class="text-red-400"
+                 *ngIf="f.password.errors?.['minlength'] && (f.password.dirty || f.password.touched || submitted)">
+            Minimum 6 characters.
+          </small>
+        </div>
+
+        <!-- Confirm -->
+        <div class="field mb-4">
+          <label for="confirmPassword" class="block mb-2">Confirm Password</label>
+          <input id="confirmPassword" type="password" pInputText formControlName="confirmPassword" class="w-full glass-input" />
+          <small class="text-red-400"
+                 *ngIf="f.confirmPassword.errors?.['required'] && (f.confirmPassword.dirty || f.confirmPassword.touched || submitted)">
+            Confirmation is required.
+          </small>
+          <small class="text-red-400"
+                 *ngIf="passwordMismatch() && (f.confirmPassword.dirty || f.confirmPassword.touched || submitted)">
+            Passwords do not match.
+          </small>
+        </div>
+
+        <!-- Terms -->
+        <div class="field mb-4 flex items-center">
+          <p-checkbox formControlName="terms" inputId="terms" binary="true"></p-checkbox>
+          <label for="terms" class="ml-2">I accept the terms of use</label>
+        </div>
+        <small class="text-red-400 mb-4 block"
+               *ngIf="(f.terms.errors?.['required'] || f.terms.errors?.['requiredTrue']) && (f.terms.touched || submitted)">
+          You must accept the terms.
+        </small>
+
+        <!-- Submit -->
+        <button pButton type="submit" label="Sign Up" class="w-full glass-submit"></button>
+
+        <div class="flex justify-center mt-4">
+          <span>Already have an account?</span>
+          <a routerLink="/login" class="ml-2 text-[rgba(255,255,255,0.5)] hover:underline hover:cursor-pointer">Sign in</a>
+        </div>
+      </div>
+    </form>
+  </p-card>
+</div>
