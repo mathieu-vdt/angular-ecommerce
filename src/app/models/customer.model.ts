@@ -1,6 +1,6 @@
 export interface Customer {
     id: number;
-    user_id: number;  // Lien avec la table User
+    user_id: number;
     first_name: string;
     last_name: string;
     email: string;
@@ -10,3 +10,4 @@ export interface Customer {
     created_at: Date;
     updated_at?: Date;
 }
+
