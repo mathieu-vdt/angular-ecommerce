@@ -8,6 +8,9 @@ import { Category } from '../../../models/category.model';
 
 import { SelectModule } from 'primeng/select';
 import { CategoryService } from '../../../services/category.service';
+import { HttpClient } from '@angular/common/http';
+import { FileUpload } from 'primeng/fileupload';
+import { CommonModule } from '@angular/common';
 
 @Component({
   standalone: true,
@@ -18,7 +21,9 @@ import { CategoryService } from '../../../services/category.service';
     InputText,
     ButtonModule,
     FormsModule,
-    SelectModule
+    SelectModule,
+    FileUpload,
+    CommonModule
   ],
   styleUrls: ['./edit-product-dialog.scss']
 })
@@ -30,12 +35,15 @@ export class EditProductDialog implements OnChanges {
   @Output() cancel = new EventEmitter<void>();
   @Output() visibleChange = new EventEmitter<boolean>();
 
+  @Input() isSaving = false;
+
   formData: Product = {} as Product;
   categories: Category[] = [];
 
   constructor(
     private cdRef: ChangeDetectorRef,
-    private categoryService: CategoryService  // Injecter le service
+    private categoryService: CategoryService,
+    private http: HttpClient
   ) {}
 
   ngOnInit() {
@@ -59,6 +67,8 @@ export class EditProductDialog implements OnChanges {
   }
 
   onSave() {
+    if (this.isSaving) return; // Guard to avoid duplicate clicks
+
     const selectedCategory = this.categories.find(category => category.id === this.formData.idCategory);
     if (selectedCategory) {
       this.formData.idCategory = selectedCategory.id;
@@ -69,7 +79,22 @@ export class EditProductDialog implements OnChanges {
   }
 
   onCancel() {
+    if (this.isSaving) return;
     this.cancel.emit();
     this.visibleChange.emit(false);
+  }
+
+  onImageUpload(event: any) {
+    const file: File = event.files[0];
+    console.log('Uploading file:', file);
+    const formData = new FormData();
+    formData.append('file', file);
+
+    this.http.post<{ url: string }>('http://localhost:8080/api/files/upload', formData).subscribe({
+      next: (res) => {
+        this.formData.image_url = res.url;
+      },
+      error: (err) => console.error('Image upload failed', err)
+    });
   }
 }

@@ -1,123 +1,68 @@
+// src/app/services/product.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Observable, catchError, map, throwError } from 'rxjs';
 import { Product } from '../models/product.model';
-import { Observable, of, throwError } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class ProductService {
-  private products: Product[] = [
-    {
-      id: 1,
-      name: 'Blue T-Shirt',
-      description: 'A stylish blue t-shirt',
-      price: 29,
-      stock: 100,
-      idCategory: 1,
-      image_url: 'blue-t-shirt.jpg',
-      created_at: new Date(),
-    },
-    {
-      id: 2,
-      name: 'Bracelet',
-      description: 'A beautiful bracelet',
-      price: 15,
-      stock: 50,
-      idCategory: 2,
-      image_url: 'bracelet.jpg',
-      created_at: new Date(),
-    },
-    {
-      id: 3,
-      name: 'Blue Band',
-      description: 'A fitness blue band',
-      price: 79,
-      stock: 30,
-      idCategory: 3,
-      image_url: 'blue-band.jpg',
-      created_at: new Date(),
-    },
-    {
-      id: 4,
-      name: 'Black Watch',
-      description: 'A sleek black watch',
-      price: 199,
-      stock: 20,
-      idCategory: 4,
-      image_url: 'black-watch.jpg',
-      created_at: new Date(),
-    },
-    {
-      id: 5,
-      name: 'Bamboo Watch',
-      description: 'An eco-friendly bamboo watch',
-      price: 65,
-      stock: 15,
-      idCategory: 5,
-      image_url: 'bamboo-watch.jpg',
-      created_at: new Date(),
-    },
-    {
-      id: 6,
-      name: 'Bracelet',
-      description: 'A beautiful bracelet',
-      price: 15,
-      stock: 50,
-      idCategory: 2,
-      image_url: 'bracelet.jpg',
-      created_at: new Date(),
-    },
-    {
-      id: 7,
-      name: 'Blue T-Shirt',
-      description: 'A stylish blue t-shirt',
-      price: 29,
-      stock: 100,
-      idCategory: 1,
-      image_url: 'blue-t-shirt.jpg',
-      created_at: new Date(),
-    },
-    {
-      id: 8,
-      name: 'Blue Band',
-      description: 'A fitness blue band',
-      price: 79,
-      stock: 30,
-      idCategory: 3,
-      image_url: 'blue-band.jpg',
-      created_at: new Date(),
-    },
-    {
-      id: 9,
-      name: 'Bamboo Watch',
-      description: 'An eco-friendly bamboo watch',
-      price: 65,
-      stock: 15,
-      idCategory: 5,
-      image_url: 'bamboo-watch.jpg',
-      created_at: new Date(),
-    },
-    {
-      id: 10,
-      name: 'Black Watch',
-      description: 'A sleek black watch',
-      price: 199,
-      stock: 20,
-      idCategory: 4,
-      image_url: 'black-watch.jpg',
-      created_at: new Date(),
-    },
-  ];
+  private baseUrl = `http://localhost:8080/api/products`;
 
   constructor(private http: HttpClient) {}
 
-  getProducts(): Observable<Product[]> {
-    return of(this.products);
+  // Récupère tous les produits
+  getAll(): Observable<Product[]> {
+    return this.http.get<any>(this.baseUrl).pipe(
+      map(res => {
+        // si res est déjà un tableau, le retourner tel quel
+        if (Array.isArray(res)) return res as Product[];
+        // si res.content existe (Page), retourner content
+        if (res && Array.isArray(res.content)) return res.content as Product[];
+        // fallback: tenter de deviner un champ qui contient les données
+        return res?.data ?? []; // si tu utilises { data: [...] } ailleurs
+      }),
+      catchError(err => {
+        console.error('ProductService.getAll error', err);
+        return throwError(() => err);
+      })
+    );
   }
 
-  getProductById(productId: number): Observable<Product> {
-    const product = this.products.find((p) => p.id === productId);
-    return product ? of(product) : throwError(() => new Error('Product not found'));
+  getById(id: number): Observable<Product> {
+    return this.http.get<Product>(`${this.baseUrl}/${id}`).pipe(
+      catchError(err => {
+        console.error('ProductService.getById error', err);
+        return throwError(() => err);
+      })
+    );
+  }
+
+  create(product: Product): Observable<Product> {
+    return this.http.post<Product>(this.baseUrl, product).pipe(
+      catchError(err => {
+        console.error('ProductService.create error', err);
+        return throwError(() => err);
+      })
+    );
+  }
+
+  update(id: number, product: Product): Observable<Product> {
+    return this.http.put<Product>(`${this.baseUrl}/${id}`, product).pipe(
+      catchError(err => {
+        console.error('ProductService.update error', err);
+        return throwError(() => err);
+      })
+    );
+  }
+
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}`).pipe(
+      catchError(err => {
+        console.error('ProductService.delete error', err);
+        return throwError(() => err);
+      })
+    );
   }
 }

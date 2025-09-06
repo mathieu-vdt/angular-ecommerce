@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Panel } from 'primeng/panel';
 import { TableModule } from 'primeng/table';
@@ -16,7 +16,6 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { Card } from 'primeng/card';
 import { ProductService } from '../../services/product.service';
 import { Product } from '../../models/product.model';
-import { ChangeDetectorRef } from '@angular/core';
 import { CategoryService } from '../../services/category.service';
 import { Category } from '../../models/category.model';
 
@@ -24,16 +23,16 @@ import { Category } from '../../models/category.model';
   standalone: true,
   selector: 'app-products',
   imports: [
-    RouterOutlet, Panel, TableModule, CommonModule, 
-    Button, InputTextModule, FormsModule, DialogModule, 
-    ButtonModule, EditProductDialog, DataViewModule, 
+    RouterOutlet, Panel, TableModule, CommonModule,
+    Button, InputTextModule, FormsModule, DialogModule,
+    ButtonModule, EditProductDialog, DataViewModule,
     SelectButtonModule, ConfirmDialogModule, Card
   ],
   providers: [ConfirmationService],
   templateUrl: './products.html',
   styleUrls: ['./products.scss']
 })
-export class Products implements OnInit{
+export class Products implements OnInit {
   protected title = 'back-office';
   layout: 'list' | 'grid' = 'grid';
 
@@ -41,12 +40,16 @@ export class Products implements OnInit{
     { label: 'List', value: 'list', icon: 'pi pi-bars' },
     { label: 'Grid', value: 'grid', icon: 'pi pi-table' }
   ];
-    
+
   categories: Category[] = [];
   selectedCategories: any[] = [];
   products: Product[] = [];
   selectedProduct: Product | null = null;
-  editDialogVisible: boolean = false;
+  editDialogVisible = false;
+
+  // State
+  isSaving = false;
+  isDeleting: Record<number, boolean> = {};
 
   constructor(
     private productService: ProductService,
@@ -55,20 +58,30 @@ export class Products implements OnInit{
     private categoryService: CategoryService
   ) {}
 
-
   ngOnInit(): void {
-    this.categoryService.getCategories().subscribe((data) => {
-      this.categories = data;
-    });
-    this.loadProducts();
+    this.loadCategoriesAndProducts();
   }
 
-  loadProducts(): void {
-    this.productService.getProducts().subscribe((data) => {
-      this.products = data.map(product => {
-        const category = this.categories.find(c => c.id === product.idCategory);
-        return { ...product, category };
-      });
+  loadCategoriesAndProducts(): void {
+    // charger catégories d'abord (si tu veux enrichir les produits)
+    this.categoryService.getCategories().subscribe({
+      next: (cats) => {
+        this.categories = cats;
+        this.productService.getAll().subscribe({
+          next: (data) => {
+            this.products = data.map(product => ({
+              ...product,
+              category: this.categories.find(c => c.id === product.idCategory)
+            }));
+          },
+          error: err => {
+            console.error('Failed to load products', err);
+          }
+        });
+      },
+      error: err => {
+        console.error('Failed to load categories', err);
+      }
     });
   }
 
@@ -76,16 +89,53 @@ export class Products implements OnInit{
     this.selectedProduct = product;
     this.editDialogVisible = true;
   }
-  onProductSaved(updatedProduct: any) {
-    this.products = this.products.map(product => 
-    product.id === updatedProduct.id 
-      ? { ...updatedProduct, category: this.categories.find(c => c.id === updatedProduct.idCategory) } 
-      : product
-  );
-    this.cdRef.detectChanges();
-    this.editDialogVisible = false;
-  }
-    
+
+  onProductSaved(updatedProduct: Product) {
+  this.isSaving = true;
+
+  const isEdit = !!updatedProduct.id && updatedProduct.id !== 0;
+
+  const save$ = isEdit
+  ? this.productService.update(updatedProduct.id!, updatedProduct)
+  : this.productService.create({
+      name: updatedProduct.name,
+      description: updatedProduct.description,
+      price: updatedProduct.price,
+      stock: updatedProduct.stock,
+      idCategory: updatedProduct.idCategory,
+      image_url: updatedProduct.image_url
+    });
+
+
+  save$.subscribe({
+    next: (saved) => {
+      const withCategory = {
+        ...saved,
+        category: this.categories.find(c => c.id === saved.idCategory)
+      } as Product & { category?: Category };
+
+      if (isEdit) {
+        // replace
+        this.products = this.products.map(p => (p.id === saved.id ? withCategory : p));
+      } else {
+        // append (new product)
+        this.products = [withCategory, ...this.products];
+      }
+
+      this.cdRef.detectChanges();
+      this.editDialogVisible = false;
+      this.selectedProduct = null;
+    },
+    error: (err) => {
+      console.error(isEdit ? 'Failed to update product' : 'Failed to create product', err);
+    },
+    complete: () => {
+      this.isSaving = false;
+    }
+  });
+}
+
+
   confirmDelete(product: any) {
     this.confirmationService.confirm({
       message: 'Do you really want to delete this product?',
@@ -93,22 +143,45 @@ export class Products implements OnInit{
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Yes',
       rejectLabel: 'No',
-      rejectButtonProps: {
-          label: 'Cancel',
-          severity: 'secondary',
-          outlined: true,
+      rejectButtonProps: { label: 'Cancel', severity: 'secondary', outlined: true },
+      acceptButtonProps: { label: 'Delete', severity: 'danger' },
+      accept: () => this.deleteProduct(product)
+    });
+  }
+
+  deleteProduct(product: Product) {
+    if (!product?.id) return;
+
+    this.isDeleting[product.id] = true;
+
+    this.productService.delete(product.id).subscribe({
+      next: () => {
+        this.products = this.products.filter(p => p.id !== product.id);
+        this.cdRef.detectChanges();
       },
-      acceptButtonProps: {
-          label: 'Delete',
-          severity: 'danger',
+      error: (err) => {
+        console.error('Failed to delete product', err);
       },
-      accept: () => {
-        this.deleteProduct(product);
+      complete: () => {
+        if (product.id !== undefined) {
+          this.isDeleting[product.id] = false;
+        }
       }
     });
   }
 
-  deleteProduct(product: any) {
-    this.products = this.products.filter(o => o.id !== product.id);
+  newProduct() {
+    this.selectedProduct = {
+      id: 0 as any,
+      name: '',
+      price: 0,
+      stock: 0,
+      description: undefined,
+      image_url: undefined,
+      idCategory: this.categories[0]?.id ?? undefined
+    } as Product;
+
+    this.editDialogVisible = true;
   }
+
 }

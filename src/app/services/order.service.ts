@@ -1,63 +1,81 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of, forkJoin } from 'rxjs';
 import { Order } from '../models/order.model';
 import { OrderItem, OrderItemProduct } from '../models/orderItem.model';
 import { Product } from '../models/product.model';
 import { ProductService } from './product.service';
-import { map } from 'rxjs/operators';
+import { Observable, of, forkJoin, catchError, map } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class OrderService {
-    constructor(private http: HttpClient, private productService: ProductService) {}
+  private baseUrl = `http://localhost:8080/api/orders`;
 
-    orderItems: OrderItem[] = [
-        { id: 1, order_id: 1, product_id: 1, quantity: 2, price: 50 },
-        { id: 2, order_id: 1, product_id: 2, quantity: 1, price: 100 },
-        { id: 3, order_id: 1, product_id: 3, quantity: 3, price: 30 },
-        { id: 4, order_id: 2, product_id: 1, quantity: 1, price: 150 },
-        { id: 5, order_id: 2, product_id: 2, quantity: 2, price: 75 },
-        { id: 6, order_id: 2, product_id: 3, quantity: 4, price: 25 },
-        { id: 7, order_id: 3, product_id: 1, quantity: 5, price: 40 },
-        { id: 8, order_id: 3, product_id: 2, quantity: 2, price: 100 },
-        { id: 9, order_id: 3, product_id: 3, quantity: 1, price: 200 },
-        { id: 10, order_id: 4, product_id: 1, quantity: 3, price: 80 }
-    ];
+  private fallbackOrders: Order[] = [];
+  private fallbackItems: OrderItem[] = [];
 
+  constructor(private http: HttpClient, private productService: ProductService) {}
+
+  // get orders list (attempt API -> fallback)
   getOrders(): Observable<Order[]> {
-    // Exemple avec les produits modifiés pour utiliser idCategory
-    return of([
-        { id: 1, idCustomer: 1, total: 100, status: 'Pending' },
-        { id: 2, idCustomer: 1, total: 150, status: 'Shipped' },
-        { id: 3, idCustomer: 2, total: 200, status: 'Delivered' },
-        { id: 4, idCustomer: 2, total: 250, status: 'Cancelled' },
-        { id: 5, idCustomer: 2, total: 300, status: 'Pending' },
-        { id: 6, idCustomer: 2, total: 350, status: 'Shipped' },
-        { id: 7, idCustomer: 1, total: 400, status: 'Delivered' },
-        { id: 8, idCustomer: 3, total: 450, status: 'Cancelled' },
-        { id: 9, idCustomer: 3, total: 500, status: 'Pending' },
-        { id: 10, idCustomer: 3, total: 550, status: 'Shipped' }
-    ]);
+    return this.http.get<Order[]>(this.baseUrl).pipe(
+      catchError(err => {
+        console.warn('OrderService.getOrders failed, using fallback', err);
+        return of(this.fallbackOrders);
+      })
+    );
   }
 
+  // Try to call backend endpoint /api/orders/{id}/items which should return items + product data OR raw items.
+  // If backend doesn't have it, fallback to reconstructing items by fetching products via ProductService.
   getItemsOrder(orderId: number): Observable<OrderItemProduct[]> {
-    const items = this.orderItems.filter((item) => item.order_id === orderId);
+    const remoteItemsUrl = `${this.baseUrl}/${orderId}/items`;
 
-    // Utilisation de forkJoin pour attendre que tous les produits soient récupérés
-    const productObservables = items.map((item) =>
-      this.productService.getProductById(item.product_id)
-    );
+    // 1) Try backend endpoint that returns items with product data (best case)
+    return this.http.get<any>(remoteItemsUrl).pipe(
+      // if API returns something meaningful, try to normalize it:
+      map(response => {
+        // if response is already array of products-with-quantity, try to adapt
+        if (Array.isArray(response) && response.length > 0) {
+          // If each entry already looks like a product + quantity, return as is
+          // We do a best-effort mapping to OrderItemProduct interface
+          return response.map((r: any) => ({
+            ...r
+          })) as OrderItemProduct[];
+        }
+        return [] as OrderItemProduct[];
+      }),
+      catchError(() => {
+        // 2) Fallback: use local fallback items (or fetch items from server if you have an endpoint)
+        const items = this.fallbackItems.filter(it => it.order_id === orderId);
+        if (!items || items.length === 0) {
+          return of([] as OrderItemProduct[]);
+        }
 
-    return forkJoin(productObservables).pipe(
-      // Une fois tous les produits récupérés, on ajoute la quantité et le prix
-      map((products: Product[]) => {
-        return products.map((product, index) => ({
-          ...product,              // On garde toutes les propriétés du produit
-          quantity: items[index].quantity, // On ajoute la quantité
-          price: items[index].price,       // On ajoute le prix
-        }));
+        // build array of product observables
+        const productObservables = items.map(it => this.productService.getById(it.product_id).pipe(
+          catchError(err => {
+            console.warn('Product fetch failed for id', it.product_id, err);
+            const stub: Product = {
+              id: it.product_id,
+              name: 'Unknown',
+              price: it.price ?? 0,
+              stock: 0,
+              idCategory: 0,
+              created_at: new Date()
+            };
+            return of(stub);
+          })
+        ));
+
+        return forkJoin(productObservables).pipe(
+          map((products: Product[]) => products.map((product, idx) => ({
+            ...product,
+            quantity: items[idx].quantity,
+            price: items[idx].price
+          }) as OrderItemProduct))
+        );
       })
     );
   }

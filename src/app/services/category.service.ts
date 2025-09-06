@@ -1,22 +1,26 @@
+// src/app/services/category.service.ts
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { Category } from '../models/category.model';  // Assurez-vous d'importer l'interface Category
+import { HttpClient } from '@angular/common/http';
+import { Category } from '../models/category.model';
+import { Observable, of, catchError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CategoryService {
-  constructor() {}
+  private baseUrl = `http://localhost:8080/api/categories`;
 
-  // Méthode pour obtenir la liste des catégories
+  // fallback static data (used if backend fails)
+  private fallback: Category[] = [];
+
+  constructor(private http: HttpClient) {}
+
   getCategories(): Observable<Category[]> {
-    // Retourner une liste statique de catégories en utilisant `of()`
-    return of([
-      { id: 1, name: 'Clothing', created_at: new Date() },
-      { id: 2, name: 'Accessories', created_at: new Date() },
-      { id: 3, name: 'Fitness', created_at: new Date() },
-      { id: 4, name: 'Books', created_at: new Date() },
-      { id: 5, name: 'Electronics', created_at: new Date() }
-    ]);
+    return this.http.get<Category[]>(this.baseUrl).pipe(
+      catchError(err => {
+        console.warn('CategoryService.getCategories failed, using fallback', err);
+        return of(this.fallback);
+      })
+    );
   }
 }

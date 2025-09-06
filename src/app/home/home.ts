@@ -56,7 +56,7 @@ export class Home implements OnInit{
   }
 
   loadProducts(): void {
-    this.productService.getProducts().subscribe(products => {
+    this.productService.getAll().subscribe(products => {
       this.products = products.map(p => ({
         ...p,
         category: this.categories.find(c => c.id === p.idCategory)
