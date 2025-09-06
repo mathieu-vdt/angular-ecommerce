@@ -84,3 +84,44 @@ main{
         filter: opacity(0.7);
     }
 }
+
+/* Card en colonne pour que le contenu remplisse toute la hauteur */
+.product-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Boîte d'image avec ratio fixe 4:3 (évite les cards de tailles différentes) */
+.product-image-box {
+  position: relative;
+  width: 100%;
+  padding-top: 75%; /* 4:3 = 75%  (mets 66.66% pour 3:2, 100% pour 1:1) */
+  overflow: hidden;
+  border-radius: 0.5rem;
+  background: #f5f5f5; /* fond neutre pendant le chargement */
+}
+
+/* Image recadrée dans la boîte (cover) */
+.product-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;     /* remplit sans déformer */
+  object-position: center;
+  display: block;
+  
+  border: solid 1px #00000011;
+}
+
+/* Titre centré + ellipsis sur une seule ligne */
+.product-title {
+  text-align: center;
+  font-weight: 600;
+  font-size: 1rem;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* affiche "..." si trop long */
+}

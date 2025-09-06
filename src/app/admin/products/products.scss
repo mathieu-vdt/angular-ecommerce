@@ -2,3 +2,94 @@
     display: flex;
     justify-content: flex-end;
 }
+
+/* ====== ELLIPSIS UTIL ====== */
+.ellipsis-1 {
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ====== GRID CARDS ====== */
+.product-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Ratio fixe 4:3 (75%) pour uniformiser la hauteur des images */
+.product-image-box {
+  position: relative;
+  width: 100%;
+  padding-top: 75%;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  background: #f5f5f5;
+}
+
+.product-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+/* Titre */
+.product-title {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+/* ====== LIST VIGNETTES ====== */
+/* Vignette carrée 1:1 (tu peux passer à 4:3 en mettant 75%) */
+.list-thumb {
+  position: relative;
+  width: 160px;         /* adapte si besoin */
+  min-width: 160px;
+  max-width: 160px;
+  padding-top: 100%;    /* 1:1 ratio */
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background: #f5f5f5;
+}
+
+.list-thumb-list{
+    position: relative;
+  width: 100px;         /* adapte si besoin */
+  height: 100px;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background: #f5f5f5;
+}
+
+.list-thumb-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;    /* recadre toutes les tailles */
+  object-position: center;
+  display: block;
+}
+
+.list-thumb-img-list {
+  position: absolute;
+  inset: 0;
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+@media (max-width: 640px) {
+  .list-thumb {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+  }
+}

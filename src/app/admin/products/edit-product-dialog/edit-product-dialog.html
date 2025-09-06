@@ -3,7 +3,7 @@
   [(visible)]="visible"
   [modal]="true"
   [closable]="false"
-  styleClass="w-96">
+  styleClass="w-75">
 
   <!-- Toast global -->
   <p-toast />
@@ -57,18 +57,19 @@
     <div class="mt-3" *ngIf="imagePreviewUrl">
       <p>Prévisualisation :</p>
 
-      <!-- p-image permet le zoom/preview en plein écran -->
-      <p-image 
-        [src]="imagePreviewUrl" 
-        [alt]="formData?.name || 'preview'" 
-        [preview]="true" 
+      <p-image
+        [src]="imagePreviewUrl"
+        [alt]="formData.name || 'preview'"
+        [preview]="true"
         imageStyleClass="w-full max-h-64 object-contain rounded border">
       </p-image>
 
+      <!-- on vérifie que selectedFile est défini avant d’afficher ses props -->
       <p class="text-sm text-muted mt-1" *ngIf="selectedFile">
-        {{ selectedFile?.name }} ({{ selectedFile?.size | number }} o)
+        {{ selectedFile.name }} ({{ selectedFile.size | number }} o)
       </p>
     </div>
+
 
     <!-- Category -->
     <div class="field">

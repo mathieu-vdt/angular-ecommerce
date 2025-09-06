@@ -15,6 +15,7 @@ import { DialogModule } from 'primeng/dialog';
 import { Card } from 'primeng/card';
 import { Panel } from 'primeng/panel';
 import { Footer } from './footer/footer';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -22,7 +23,7 @@ import { Footer } from './footer/footer';
   imports: [
     Navbar, TableModule, CommonModule, 
     InputTextModule, FormsModule, DialogModule, 
-    ButtonModule, DataViewModule , 
+    ButtonModule, DataViewModule , RouterLink,
     SelectButtonModule,Card, Panel, Footer
   ],
   templateUrl: './home.html',

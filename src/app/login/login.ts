@@ -8,11 +8,12 @@ import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CardModule, ReactiveFormsModule, InputTextModule, ButtonModule, CheckboxModule, ToastModule],
+  imports: [CardModule, ReactiveFormsModule, InputTextModule, ButtonModule, CheckboxModule, ToastModule, RouterLink],
   providers: [MessageService],
   templateUrl: './login.html',
   styleUrls: ['./login.scss']

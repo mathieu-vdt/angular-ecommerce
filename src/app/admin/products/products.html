@@ -22,23 +22,38 @@
       </div>
     </ng-template>
 
+    <!-- LIST -->
     <ng-template #list let-items>
       <div *ngFor="let item of items; let first = first">
-        <div class="flex flex-col sm:flex-row sm:items-center w-full gap-4 p-3" [ngClass]="{ 'border-t border-surface-200 dark:border-surface-700': !first }">
-          <div class="md:w-40 relative">
-            <img class="block xl:block  rounded w-full" [src]="'https://primefaces.org/cdn/primeng/images/demo/product/' + item.image_url" [alt]="item.name" />
+        <div class="flex flex-col sm:flex-row sm:items-center w-full gap-4 p-3"
+            [ngClass]="{ 'border-t border-surface-200 dark:border-surface-700': !first }">
+
+          <!-- VIGNETTE FIXE -->
+          <div class="list-thumb-list">
+            <img class="list-thumb-img-list"
+                [src]="item.image_url || 'assets/placeholder.png'"
+                [alt]="item.name" />
           </div>
+
+          <!-- CONTENU -->
           <div class="flex flex-col md:flex-row justify-between md:items-center flex-1 gap-6">
-            <div class="flex flex-row md:flex-col justify-between items-start gap-2">
-              <div>
-                <!-- Affichage de la catégorie avec l'objet category complet -->
-                <span class="font-medium text-secondary text-sm">{{ item.category?.name }}</span>
-                <div class="text-lg font-medium mt-2">{{ item.name }}</div>
+            <div class="flex flex-row md:flex-col justify-between items-start gap-2 md:gap-1 flex-1">
+              <div class="w-full">
+                <span class="font-medium text-secondary text-sm block text-center md:text-left ellipsis-1">
+                  {{ item.category?.name }}
+                </span>
+
+                <!-- TITRE CENTRÉ + ELLIPSIS -->
+                <div class="product-title ellipsis-1 text-center md:text-left" title="{{ item.name }}">
+                  {{ item.name }}
+                </div>
               </div>
-              
             </div>
+
             <div class="flex flex-col md:items-end gap-8">
-              <span class="text-xl font-semibold text-surface-900 dark:text-surface-0">{{ '$' + item.price }}</span>
+              <span class="text-xl font-semibold text-surface-900 dark:text-surface-0">
+                {{ '$' + item.price }}
+              </span>
               <div class="flex flex-row-reverse md:flex-row gap-2">
                 <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" styleClass="p-button-secondary" (click)="editProduct(item)"></p-button>
                 <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger" (onClick)="confirmDelete(item)"></p-button>
@@ -49,17 +64,34 @@
       </div>
     </ng-template>
 
+    <!-- GRID -->
     <ng-template #grid let-items>
       <div class="grid grid-cols-12 gap-4">
         <div *ngFor="let product of items" class="col-span-12 sm:col-span-6 md:col-span-4 xl:col-span-3 p-2">
-          <p-card>
-            <div>
-              <img alt="Card" class="w-100 justify-self-center rounded" [src]="'https://primefaces.org/cdn/primeng/images/demo/product/' + product.image_url" />
+          <p-card styleClass="product-card h-full">
+            <!-- Image ratio fixe -->
+            <div class="product-image-box">
+              <img
+                [src]="product.image_url || 'assets/placeholder.png'"
+                alt="Product image"
+                class="product-image"
+              />
             </div>
-            <div class="flex flex-col items-center gap-2 py-2">
-              <div class="text-lg font-medium">{{ product.name }}</div>
-              <div class="text-secondary text-sm">{{ product.category?.name }}</div>  <!-- Affichage de la catégorie -->
-              <div class="text-xl font-semibold">{{ '$' + product.price }}</div>
+
+            <div class="flex flex-col items-center gap-2 py-3 flex-1">
+              <!-- Titre centré + ellipsis -->
+              <div class="product-title ellipsis-1 text-center" title="{{ product.name }}">
+                {{ product.name }}
+              </div>
+
+              <div class="text-secondary text-sm text-center ellipsis-1">
+                {{ product.category?.name }}
+              </div>
+
+              <div class="text-xl font-semibold text-center">
+                {{ '$' + product.price }}
+              </div>
+
               <div class="flex gap-2 mt-2">
                 <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" styleClass="p-button-secondary" (click)="editProduct(product)"></p-button>
                 <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger" (onClick)="confirmDelete(product)"></p-button>
@@ -69,6 +101,7 @@
         </div>
       </div>
     </ng-template>
+
   </p-dataview>
 </p-panel>
 

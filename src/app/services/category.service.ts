@@ -2,7 +2,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Category } from '../models/category.model';
-import { Observable, of, catchError } from 'rxjs';
+import { Observable, of, catchError, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +20,15 @@ export class CategoryService {
       catchError(err => {
         console.warn('CategoryService.getCategories failed, using fallback', err);
         return of(this.fallback);
+      })
+    );
+  }
+
+  getById(id: number): Observable<Category> {
+    return this.http.get<Category>(`${this.baseUrl}/${id}`).pipe(
+      catchError(err => {
+        console.error('CategoryService.getById error', err);
+        return throwError(() => err);
       })
     );
   }

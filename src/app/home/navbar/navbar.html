@@ -1,55 +1,144 @@
-<header class="container relative mx-auto flex items-center justify-between px-4 py-4">
-  <!-- Logo -->
-  <a routerLink="/" class="flex items-center whitespace-nowrap text-2xl font-black lg:mr-8">
-    <span class="mr-2 w-10">
-      <img src="assets/logoMathieu_black.png" alt="Logo" />
-    </span>
-  </a>
+<!-- TOP BAR -->
+<p-toolbar
+  [style]="{
+    'background': isHome ? 'transparent' : '#ffffff',
+    'box-shadow': isHome ? 'none' : '0 2px 6px rgba(0,0,0,.06)',
+    'border': 'none',
+    'padding': '1rem 2rem'
+  }"
+>
+  <div class="p-toolbar-group-start flex items-center gap-2">
+    <!-- Logo -->
+    <a routerLink="/" class="flex items-center font-bold text-xl gap-2">
+      <img src="assets/logoMathieu_black.png" alt="Logo" class="h-8" />
+    </a>
+  </div>
 
-  <!-- Toggle checkbox (mobile) -->
-  <input #navOpen type="checkbox" id="nav-open" class="peer sr-only" />
-
-  <!-- Burger (mobile only) -->
-  <label for="nav-open" class="cursor-pointer lg:hidden">
-    <svg class="h-7 w-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-            d="M4 6h16M4 12h16M4 18h16"/>
-    </svg>
-  </label>
-
-  <!-- Backdrop (mobile only) -->
-  <label for="nav-open"
-         class="fixed inset-0 z-40 bg-black/50 opacity-0 pointer-events-none transition
-                peer-checked:opacity-100 peer-checked:pointer-events-auto lg:hidden"></label>
-
-  <!-- Nav (mobile drawer / desktop flex) -->
-  <nav aria-label="Header Navigation"
-       class="fixed left-0 top-0 z-50 h-screen w-80 max-w-[85%] -translate-x-full bg-[#0b0f14]/90 backdrop-blur
-              px-6 py-6 transition-transform duration-300
-              peer-checked:translate-x-0
-              lg:static lg:h-auto lg:w-full lg:translate-x-0 lg:bg-transparent lg:backdrop-blur-0 lg:px-0 lg:py-0
-              lg:flex lg:items-center lg:justify-between">
-
-    <!-- Links (center on desktop) -->
-    <ul class="flex flex-col gap-4 navbar-links lg:flex-row lg:gap-10 lg:mx-auto">
-      <li><a (click)="close()" routerLink="/" class="nav-link">Home</a></li>
-      <li><a (click)="close()" routerLink="/products" class="nav-link">Products</a></li>
-      <li><a (click)="close()" routerLink="/contact" class="nav-link">Contact</a></li>
-      <li><a (click)="close()" routerLink="/faq" class="nav-link">FAQ</a></li>
+  <!-- Liens CENTRÉS (desktop) -->
+  <div class="hidden lg:flex p-toolbar-group-center flex-1 justify-center">
+    <ul class="flex gap-8">
+      <li *ngFor="let l of links"
+          [routerLinkActive]="isHome ? ['is-active-home'] : ['is-active']"
+          [routerLinkActiveOptions]="{ exact: l.routerLink === '/' }">
+        <a
+          [routerLink]="l.routerLink"
+          class="nav-link relative font-semibold flex items-center gap-2
+                after:block after:h-[2px] after:w-0 after:bg-current after:transition-all after:duration-200
+                after:absolute after:left-1/2 after:-translate-x-1/2 after:-bottom-1
+                hover:after:w-full focus-visible:after:w-full"
+          [ngClass]="isHome ? 'text-white hover:text-white' : 'text-[#262626] hover:text-sky-600'"
+        >
+          <i [class]="l.icon"></i>
+          {{ l.label }}
+        </a>
+      </li>
     </ul>
+  </div>
 
-    <!-- Separator mobile -->
-    <hr class="my-6 border-white/20 lg:hidden" />
 
-    <!-- Actions (right on desktop) -->
-    <div class="mt-4 flex flex-col gap-3 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
-      <div *ngIf="isLoggedIn; else loggedOut">
-        <a (click)="logout()" class="btn-link">Logout</a>
-      </div>
-      <ng-template #loggedOut>
-        <a routerLink="/login" class="btn-link">Log in</a>
-        <a routerLink="/register" class="btn-primary">Sign In</a>
+  <!-- Actions DROITE (desktop) + burger mobile -->
+<div class="p-toolbar-group-end flex items-center gap-3">
+  <!-- Actions desktop uniquement -->
+  <div class="hidden lg:flex items-center gap-3">
+    <ng-container *ngIf="isLoggedIn; else loggedOut">
+      <!-- Logout (texte) -->
+      <button
+        pButton
+        class="p-button-text"
+        (click)="logout()"
+        [ngClass]="isHome ? 'text-white' : 'text-[#262626]'">
+        <i class="pi pi-sign-out mr-2"></i>
+        Logout
+      </button>
+    </ng-container>
+
+    <ng-template #loggedOut>
+      <!-- Log in (texte) -->
+      <a
+        routerLink="/login"
+        class="group relative flex items-center gap-2 font-medium
+              after:block after:h-[2px] after:w-0 after:bg-current after:transition-all after:duration-200 after:absolute after:left-1/2 after:-translate-x-1/2 after:-bottom-1
+              hover:after:w-full focus-visible:after:w-full"
+        [ngClass]="isHome ? 'text-white hover:text-white' : 'text-[#262626] hover:text-sky-600'"
+      >
+        <i class="pi pi-sign-in"></i>
+        Log in
+      </a>
+
+
+      <!-- Sign In (outlined) : blanc sur home -->
+      <a
+        routerLink="/register"
+        pButton
+        class="p-button-outlined"
+        [ngStyle]="registerStyles"
+        (mouseenter)="isRegisterHovered = true"
+        (mouseleave)="isRegisterHovered = false"
+      >
+        <i class="pi pi-user-plus mr-2"></i>
+        Sign In
+      </a>
+    </ng-template>
+  </div>
+
+  <!-- Burger mobile uniquement -->
+  <div class="lg:hidden">
+    <button
+  pButton
+  class="p-button-text lg:hidden"
+  type="button"
+  (click)="sidebarVisible = true"
+  [ngStyle]="isHome ? { color: '#fff' } : { color: '#262626' }"
+  aria-label="Menu"
+>
+  <i class="pi pi-bars text-xl"></i>
+</button>
+
+  </div>
+</div>
+
+</p-toolbar>
+
+<!-- SIDEBAR MOBILE -->
+<p-drawer [(visible)]="sidebarVisible" position="left" [modal]="true" [dismissible]="true" [showCloseIcon]="true">
+  <div class="flex flex-col gap-6">
+    <!-- Liens -->
+    <nav>
+      <ul class="flex flex-col gap-4">
+        <li *ngFor="let l of links">
+          <a
+            [routerLink]="l.routerLink"
+            routerLinkActive="active-link"
+            class="group flex items-center gap-2 relative font-semibold
+                  after:block after:h-[2px] after:w-0 after:bg-current after:transition-all after:duration-200 after:absolute after:left-1/2 after:-translate-x-1/2 after:-bottom-1
+                  hover:after:w-full focus-visible:after:w-full"
+            [ngClass]="isHome ? 'text-white hover:text-white' : 'text-[#262626] hover:text-sky-600'"
+          >
+            <i [class]="l.icon"></i>
+            {{ l.label }}
+          </a>
+
+        </li>
+      </ul>
+    </nav>
+
+    <hr class="border-surface-200" />
+
+    <!-- Actions -->
+    <div class="flex flex-col gap-3">
+      <ng-container *ngIf="isLoggedIn; else loggedOutM">
+        <button pButton class="p-button-outlined w-full" (click)="logout()">
+          <i class="pi pi-sign-out mr-2"></i> Logout
+        </button>
+      </ng-container>
+      <ng-template #loggedOutM>
+        <a routerLink="/login" pButton class="p-button-text w-full" (click)="sidebarVisible = false">
+          <i class="pi pi-sign-in mr-2"></i> Log in
+        </a>
+        <a routerLink="/register" pButton class="p-button-outlined w-full" (click)="sidebarVisible = false">
+          <i class="pi pi-user-plus mr-2"></i> Sign In
+        </a>
       </ng-template>
     </div>
-  </nav>
-</header>
+  </div>
+</p-drawer>

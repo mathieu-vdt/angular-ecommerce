@@ -6,6 +6,7 @@ import { Orders } from './admin/orders/orders';
 import { Home } from './home/home';
 import { Login } from './login/login';
 import { Register } from './register/register';
+import { ProductOverview } from './home/product-overview/product-overview';
 
 export const routes: Routes = [
   { path: '', component: Home },
@@ -21,4 +22,5 @@ export const routes: Routes = [
   },
   { path: 'login', component: Login },
   { path: 'register', component: Register },
+  { path: 'products/:id', component: ProductOverview },
 ];
