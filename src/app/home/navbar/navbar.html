@@ -1,10 +1,10 @@
-<!-- TOP BAR -->
-<p-toolbar
+<p-toolbar class="fixed top-0 left-0 right-0 z-50"
   [style]="{
-    'background': isHome ? 'transparent' : '#ffffff',
-    'box-shadow': isHome ? 'none' : '0 2px 6px rgba(0,0,0,.06)',
+    'background': '#ffffff',
+    'box-shadow': '0 2px 6px rgba(0,0,0,.06)',
     'border': 'none',
-    'padding': '1rem 2rem'
+    'border-radius': '0',
+    'padding': '1rem 2rem',
   }"
 >
   <div class="p-toolbar-group-start flex items-center gap-2">
@@ -18,7 +18,7 @@
   <div class="hidden lg:flex p-toolbar-group-center flex-1 justify-center">
     <ul class="flex gap-8">
       <li *ngFor="let l of links"
-          [routerLinkActive]="isHome ? ['is-active-home'] : ['is-active']"
+          routerLinkActive='is-active'
           [routerLinkActiveOptions]="{ exact: l.routerLink === '/' }">
         <a
           [routerLink]="l.routerLink"
@@ -26,7 +26,7 @@
                 after:block after:h-[2px] after:w-0 after:bg-current after:transition-all after:duration-200
                 after:absolute after:left-1/2 after:-translate-x-1/2 after:-bottom-1
                 hover:after:w-full focus-visible:after:w-full"
-          [ngClass]="isHome ? 'text-white hover:text-white' : 'text-[#262626] hover:text-sky-600'"
+          [ngClass]="'text-[#262626] hover:text-sky-600'"
         >
           <i [class]="l.icon"></i>
           {{ l.label }}
@@ -46,7 +46,7 @@
         pButton
         class="p-button-text"
         (click)="logout()"
-        [ngClass]="isHome ? 'text-white' : 'text-[#262626]'">
+        [ngClass]="'text-[#262626]'">
         <i class="pi pi-sign-out mr-2"></i>
         Logout
       </button>
@@ -56,10 +56,10 @@
       <!-- Log in (texte) -->
       <a
         routerLink="/login"
-        class="group relative flex items-center gap-2 font-medium
+        class="group relative flex items-center gap-2 font-medium 
               after:block after:h-[2px] after:w-0 after:bg-current after:transition-all after:duration-200 after:absolute after:left-1/2 after:-translate-x-1/2 after:-bottom-1
               hover:after:w-full focus-visible:after:w-full"
-        [ngClass]="isHome ? 'text-white hover:text-white' : 'text-[#262626] hover:text-sky-600'"
+        [ngClass]="'text-[#262626] hover:text-sky-600'"
       >
         <i class="pi pi-sign-in"></i>
         Log in
@@ -70,15 +70,62 @@
       <a
         routerLink="/register"
         pButton
-        class="p-button-outlined"
-        [ngStyle]="registerStyles"
-        (mouseenter)="isRegisterHovered = true"
-        (mouseleave)="isRegisterHovered = false"
       >
         <i class="pi pi-user-plus mr-2"></i>
         Sign In
       </a>
     </ng-template>
+
+    <!-- Panier (badge + popover au clic ou au survol) -->
+    <div class="relative  lg:block">
+      <p-overlaybadge [value]="(count$ | async) || 0" >
+        <button
+                class="text-[#262626] hover:text-sky-600 transition text-xl"
+                type="button"
+                (click)="cartPopover.toggle($event)"
+                aria-label="Cart">
+          <i class="pi pi-shopping-cart" style="font-size: 1.2rem"></i>
+        </button>
+      </p-overlaybadge>
+
+      <p-popover #cartPopover>
+        <ng-template pTemplate="content">
+          <ng-container *ngIf="(items$ | async) as items; else emptyCart">
+            <div class="min-w-[280px] max-w-[360px]">
+              <div class="max-h-64 overflow-auto divide-y">
+                <div *ngFor="let it of items" class="flex items-center gap-3 p-2">
+                  <img [src]="it.product.image_url || 'assets/placeholder.png'"
+                      class="w-10 h-10 rounded object-cover" />
+                  <div class="flex-1">
+                    <div class="text-sm font-medium max-w-[150px] truncate">{{ it.product.name }}</div>
+                    <div class="text-xs text-gray-500">
+                      x{{ it.qty }} — ${{ it.product.price }}
+                    </div>
+                  </div>
+                  <button pButton class="p-button-text p-0"
+                          (click)="removeFromCart(it.product.id!)"
+                          aria-label="Remove">
+                    <i class="pi pi-times"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="flex items-center justify-between p-2 font-semibold">
+                <span>Total</span>
+                <span>${{ (cart.total$ | async) || 0 | number:'1.0-2' }}</span>
+              </div>
+              <div class="flex gap-2 p-2">
+                <a routerLink="/cart" pButton class="p-button-outlined w-full">View cart</a>
+                <a routerLink="/cart" pButton class="w-full">Checkout</a>
+              </div>
+            </div>
+          </ng-container>
+
+          <ng-template #emptyCart>
+            <div class="p-4 text-sm text-gray-500">Your cart is empty.</div>
+          </ng-template>
+        </ng-template>
+      </p-popover>
+    </div>
   </div>
 
   <!-- Burger mobile uniquement -->
@@ -88,7 +135,7 @@
   class="p-button-text lg:hidden"
   type="button"
   (click)="sidebarVisible = true"
-  [ngStyle]="isHome ? { color: '#fff' } : { color: '#262626' }"
+  [ngStyle]="{ color: '#262626' }"
   aria-label="Menu"
 >
   <i class="pi pi-bars text-xl"></i>
@@ -98,6 +145,7 @@
 </div>
 
 </p-toolbar>
+<div class="h-20 lg:h-18"></div>
 
 <!-- SIDEBAR MOBILE -->
 <p-drawer [(visible)]="sidebarVisible" position="left" [modal]="true" [dismissible]="true" [showCloseIcon]="true">
@@ -112,13 +160,25 @@
             class="group flex items-center gap-2 relative font-semibold
                   after:block after:h-[2px] after:w-0 after:bg-current after:transition-all after:duration-200 after:absolute after:left-1/2 after:-translate-x-1/2 after:-bottom-1
                   hover:after:w-full focus-visible:after:w-full"
-            [ngClass]="isHome ? 'text-white hover:text-white' : 'text-[#262626] hover:text-sky-600'"
           >
             <i [class]="l.icon"></i>
             {{ l.label }}
           </a>
 
         </li>
+       <a [routerLink]="'/cart'"
+        class="group flex items-center gap-2 relative font-semibold
+                after:block after:h-[2px] after:w-0 after:bg-current after:transition-all after:duration-200
+                after:absolute after:left-1/2 after:-translate-x-1/2 after:-bottom-1
+                hover:after:w-full focus-visible:after:w-full text-[#262626] hover:text-sky-600">
+        <span class="inline-flex relative">
+          <p-overlaybadge [value]="(count$ | async) || 0" class="inline-flex">
+            <i class="pi pi-shopping-cart text-base"></i>
+          </p-overlaybadge>
+        </span>
+        Cart
+      </a>
+
       </ul>
     </nav>
 
@@ -140,5 +200,7 @@
         </a>
       </ng-template>
     </div>
+    
+
   </div>
 </p-drawer>

@@ -19,6 +19,7 @@ import { Toast } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { Navbar } from '../navbar/navbar';
 import { Footer } from '../footer/footer';
+import { CartService } from '../../services/cart.service';
 
 
 @Component({
@@ -45,6 +46,8 @@ export class ProductOverview {
   qty = 1;
   loading = true;
   notFound = false;
+
+  constructor(private cart: CartService) {}
 
   ngOnInit() {
     this.route.paramMap.pipe(
@@ -83,9 +86,9 @@ export class ProductOverview {
     });
   }
 
+  
   addToCart() {
     if (!this.product) return;
-    // TODO: branche ton CartService ici
-    this.messageService.add({ severity: 'success', summary: 'Added to Cart', detail: `${this.product.name} x${this.qty}` });
+    this.cart.add(this.product, this.qty || 1);
   }
 }

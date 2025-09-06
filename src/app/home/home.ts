@@ -16,6 +16,7 @@ import { Card } from 'primeng/card';
 import { Panel } from 'primeng/panel';
 import { Footer } from './footer/footer';
 import { RouterLink } from '@angular/router';
+import { CartService } from '../services/cart.service';
 
 @Component({
   selector: 'app-home',
@@ -46,7 +47,8 @@ export class Home implements OnInit{
 
   constructor(
     private productService: ProductService,
-    private categoryService: CategoryService
+    private categoryService: CategoryService,
+    public cart: CartService
   ) {}
 
   ngOnInit(): void {
