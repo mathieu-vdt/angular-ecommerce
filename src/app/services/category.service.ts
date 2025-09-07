@@ -14,6 +14,7 @@ export class CategoryService {
   private fallback: Category[] = [];
 
   constructor(private http: HttpClient) {}
+  
 
   getCategories(): Observable<Category[]> {
     return this.http.get<Category[]>(this.baseUrl).pipe(

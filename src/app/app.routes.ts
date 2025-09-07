@@ -11,6 +11,7 @@ import { Cart } from './home/cart/cart';
 import { Faq } from './home/faq/faq';
 import { Contact } from './home/contact/contact';
 import { AuthGuard } from './auth.guard';
+import { Dashboard } from './admin/dashboard/dashboard';
 
 
 export const routes: Routes = [
@@ -20,7 +21,8 @@ export const routes: Routes = [
     component: Admin,
     canActivate: [AuthGuard],
     children: [
-      { path: '', component: Admin },
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: 'dashboard', component: Dashboard },
       { path: 'users', component: Users },
       { path: 'products', component: Products },
       { path: 'orders', component: Orders }

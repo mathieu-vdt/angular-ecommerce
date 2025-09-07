@@ -1,0 +1,30 @@
+<!-- DASHBOARD -->
+<div class="grid grid-cols-12 gap-4">
+    <!-- Orders Line -->
+    <div class="col-span-12 lg:col-span-8">
+    <p-card header="Orders (last 7 days)">
+        <div style="height: 320px">
+        <p-chart type="line" [data]="ordersData" [options]="ordersOptions"></p-chart>
+        </div>
+    </p-card>
+    </div>
+
+    <!-- Categories Doughnut -->
+    <div class="col-span-12 lg:col-span-4">
+    <p-card header="Products by Category">
+        <div style="height: 320px">
+        <p-chart type="doughnut" [data]="categoriesData" [options]="categoriesOptions"></p-chart>
+        </div>
+    </p-card>
+    </div>
+
+    <!-- Revenue vs Refunds Bar -->
+    <div class="col-span-12">
+    <p-card header="Revenue vs Refunds">
+        <div style="height: 360px">
+        <p-chart type="bar" [data]="revenueData" [options]="revenueOptions"></p-chart>
+        </div>
+    </p-card>
+    </div>
+</div>
+<router-outlet></router-outlet>
