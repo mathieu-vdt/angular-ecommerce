@@ -68,7 +68,7 @@
         </td>
         <td>{{ order.id }}</td>
         <td>{{ order.idCustomer }}</td>
-        <td>{{ order.total }} €</td>
+        <td>{{ order.total }} $</td>
         <td>{{ order.status }}</td>
         <td>
           <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" styleClass="p-button-secondary" (click)="editOrder(order)"></p-button>
@@ -94,12 +94,12 @@
                 <tr>
                   <td>
                     <img class="rounded w-full" 
-                    [src]="'https://primefaces.org/cdn/primeng/images/demo/product/' + item.image_url" alt="{{ item.name }}" style="width: 50px; height: 50px; object-fit: cover;" />
+                    [src]="item.image_url" alt="{{ item.name }}" style="width: 50px; height: 50px; object-fit: cover;" />
                   </td>
                   <td>{{ item.name }}</td>
-                  <td>{{ item.price }} €</td>
+                  <td>{{ item.price }} $</td>
                   <td>{{ item.quantity }}</td>
-                  <td>{{ item.price * item.quantity }} €</td>
+                  <td>{{ item.price * item.quantity }} $</td>
                 </tr>
               </ng-template>
               <ng-template pTemplate="emptymessage">
@@ -111,7 +111,7 @@
             <table class="w-full mt-4">
               <tr>
                 <td>
-                  <span class="font-bold text-end">Total: </span>{{ getTotalForOrder(order.id) }} €
+                  <span class="font-bold text-end">Total: </span>{{ getTotalForOrder(order.id) }} $
                 </td>
               </tr>
             </table>

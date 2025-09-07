@@ -2,8 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, RouterOutlet } from '@angular/router';
 
-import { Sidebar } from '../sidebar/sidebar';
-
 // PrimeNG
 import { CardModule } from 'primeng/card';
 import { ChartModule } from 'primeng/chart';
@@ -33,7 +31,7 @@ type Order = {
   standalone: true,
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.scss'],
-  imports: [CommonModule, RouterModule, RouterOutlet, Sidebar, CardModule, ChartModule]
+  imports: [CommonModule, RouterModule, RouterOutlet, CardModule, ChartModule]
 })
 export class Dashboard implements OnInit {
   // État

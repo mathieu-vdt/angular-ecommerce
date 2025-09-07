@@ -27,19 +27,13 @@ export class OrderService {
     );
   }
 
-  // Try to call backend endpoint /api/orders/{id}/items which should return items + product data OR raw items.
-  // If backend doesn't have it, fallback to reconstructing items by fetching products via ProductService.
+  
   getItemsOrder(orderId: number): Observable<OrderItemProduct[]> {
     const remoteItemsUrl = `${this.baseUrl}/${orderId}/items`;
 
-    // 1) Try backend endpoint that returns items with product data (best case)
     return this.http.get<any>(remoteItemsUrl).pipe(
-      // if API returns something meaningful, try to normalize it:
       map(response => {
-        // if response is already array of products-with-quantity, try to adapt
         if (Array.isArray(response) && response.length > 0) {
-          // If each entry already looks like a product + quantity, return as is
-          // We do a best-effort mapping to OrderItemProduct interface
           return response.map((r: any) => ({
             ...r
           })) as OrderItemProduct[];
@@ -47,13 +41,11 @@ export class OrderService {
         return [] as OrderItemProduct[];
       }),
       catchError(() => {
-        // 2) Fallback: use local fallback items (or fetch items from server if you have an endpoint)
         const items = this.fallbackItems.filter(it => it.order_id === orderId);
         if (!items || items.length === 0) {
           return of([] as OrderItemProduct[]);
         }
 
-        // build array of product observables
         const productObservables = items.map(it => this.productService.getById(it.product_id).pipe(
           catchError(err => {
             console.warn('Product fetch failed for id', it.product_id, err);

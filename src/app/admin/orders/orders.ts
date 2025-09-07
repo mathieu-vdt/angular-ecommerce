@@ -1,123 +1,184 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
+
 import { Panel } from 'primeng/panel';
 import { TableModule } from 'primeng/table';
-import { CommonModule } from '@angular/common';
-import { Button } from 'primeng/button';
+import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelect } from 'primeng/multiselect';
 import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
-import { InputText } from 'primeng/inputtext';
-import { ButtonModule } from 'primeng/button';
-import { EditOrderDialog } from './edit-order-dialog/edit-order-dialog';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
+import { RippleModule } from 'primeng/ripple';
+
 import { Order } from '../../models/order.model';
-import { OrderService } from '../../services/order.service';
 import { OrderItemProduct } from '../../models/orderItem.model';
+import { OrderService } from '../../services/order.service';
+import { EditOrderDialog } from './edit-order-dialog/edit-order-dialog';
 
 @Component({
+  standalone: true,
   selector: 'app-orders',
-  imports: [RouterOutlet, Panel, TableModule, CommonModule, Button, InputTextModule, MultiSelect, FormsModule, DialogModule, InputText, ButtonModule, EditOrderDialog, ConfirmDialogModule],
-  providers: [ConfirmationService],
   templateUrl: './orders.html',
-  styleUrl: './orders.scss'
+  styleUrls: ['./orders.scss'],
+  imports: [
+    RouterOutlet,
+    CommonModule,
+    Panel,
+    TableModule,
+    ButtonModule,
+    InputTextModule,
+    MultiSelect,
+    FormsModule,
+    DialogModule,
+    ConfirmDialogModule,
+    RippleModule,
+    EditOrderDialog
+  ],
+  providers: [ConfirmationService]
 })
-export class Orders {
+export class Orders implements OnInit {
   protected title = 'back-office - Orders';
 
+  // Table data
   orders: Order[] = [];
-  expandedRows = {};
-  orderItems: { [key: number]: OrderItemProduct[] } = {};
+  expandedRows: Record<number, boolean> = {};
+  orderItems: { [orderId: number]: OrderItemProduct[] } = {};
 
+  // Status filter (colonne "Status")
   status = [
-    { label: 'Pending', value: 'Pending' },
-    { label: 'Shipped', value: 'Shipped' },
+    { label: 'Pending',   value: 'Pending' },
+    { label: 'Shipped',   value: 'Shipped' },
     { label: 'Delivered', value: 'Delivered' },
     { label: 'Cancelled', value: 'Cancelled' }
-  ]
-  
+  ];
   selectedCategories: any[] = [];
 
-  selectedOrder: Order | null = null;  // Utilisation de l'interface Order ici
-  editDialogVisible: boolean = false;
+  // UI state
+  loading = false;
+  itemsLoading: Record<number, boolean> = {}; // chargement des items par commande
+  isDeleting: Record<number, boolean> = {};
 
+  // Edition
+  selectedOrder: Order | null = null;
+  editDialogVisible = false;
+
+  constructor(
+    private confirmationService: ConfirmationService,
+    private orderService: OrderService,
+    private cdRef: ChangeDetectorRef
+  ) {}
+
+  // ------------------------------------------------------------------
+  // Lifecycle
+  // ------------------------------------------------------------------
   ngOnInit(): void {
-    this.loadOrders();  // Charge les commandes au démarrage
+    this.loadOrders();
   }
 
-  loadOrders() {
-    this.orderService.getOrders().subscribe((orders: Order[]) => {
-      this.orders = orders;
+  // ------------------------------------------------------------------
+  // Data loading
+  // ------------------------------------------------------------------
+  loadOrders(): void {
+    this.loading = true;
+    this.orderService.getOrders().subscribe({
+      next: (orders) => {
+        this.orders = orders || [];
+      },
+      error: (err) => {
+        console.error('Failed to load orders', err);
+      },
+      complete: () => {
+        this.loading = false;
+        this.cdRef.detectChanges();
+      }
     });
   }
 
-  editOrder(order: Order) {
+  /** Chargé à l’expansion de la ligne (lazy) */
+  loadOrderItems(orderId: number): void {
+    if (!orderId) return;
+    if (this.orderItems[orderId]) return; // déjà en cache
+
+    this.itemsLoading[orderId] = true;
+    this.orderService.getItemsOrder(orderId).subscribe({
+      next: (items) => {
+        this.orderItems[orderId] = items || [];
+      },
+      error: (err) => {
+        console.error(`Failed to load items for order ${orderId}`, err);
+        this.orderItems[orderId] = [];
+      },
+      complete: () => {
+        this.itemsLoading[orderId] = false;
+        this.cdRef.detectChanges();
+      }
+    });
+  }
+
+  onRowExpand(event: any): void {
+    const order: Order = event?.data;
+    if (!order?.id) return;
+    this.expandedRows[order.id] = true;
+    this.loadOrderItems(order.id);
+  }
+
+  // ------------------------------------------------------------------
+  // Edition
+  // ------------------------------------------------------------------
+  editOrder(order: Order): void {
     this.selectedOrder = order;
     this.editDialogVisible = true;
   }
 
-  onOrderSaved(updatedOrder: Order) {
-    const index = this.orders.findIndex(p => p.id === updatedOrder.id);
-    if (index !== -1) {
-      this.orders[index] = { ...updatedOrder };
-    }
+  onOrderSaved(updated: Order): void {
+    const idx = this.orders.findIndex(o => o.id === updated.id);
+    if (idx !== -1) this.orders[idx] = { ...updated };
     this.editDialogVisible = false;
+    this.cdRef.detectChanges();
   }
 
-  constructor(private confirmationService: ConfirmationService, private orderService: OrderService) {}
-
-  confirmDelete(order: Order) {
+  // ------------------------------------------------------------------
+  // Delete (client-side pour l’instant)
+  // ------------------------------------------------------------------
+  confirmDelete(order: Order): void {
     this.confirmationService.confirm({
       message: 'Do you really want to delete this order?',
       header: 'Confirmation',
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Yes',
       rejectLabel: 'No',
-      rejectButtonProps: {
-          label: 'Cancel',
-          severity: 'secondary',
-          outlined: true,
-      },
-      acceptButtonProps: {
-          label: 'Delete',
-          severity: 'danger',
-      },
-      accept: () => {
-        this.deleteOrder(order);
-      }
+      rejectButtonProps: { label: 'Cancel', severity: 'secondary', outlined: true },
+      acceptButtonProps: { label: 'Delete', severity: 'danger' },
+      accept: () => this.deleteOrder(order)
     });
   }
 
-  deleteOrder(order: Order) {
-    const index = this.orders.findIndex(o => o.id === order.id);
-    if (index !== -1) {
-      this.orders.splice(index, 1);
-    }
+  deleteOrder(order: Order): void {
+    if (!order?.id) return;
+    this.isDeleting[order.id] = true;
+
+    // TODO: appeler l’API quand elle existe (orderService.delete(order.id))
+    this.orders = this.orders.filter(o => o.id !== order.id);
+
+    this.isDeleting[order.id] = false;
+    this.cdRef.detectChanges();
   }
 
-  // Fonction pour calculer le total d'une commande
+  // ------------------------------------------------------------------
+  // Totaux
+  // ------------------------------------------------------------------
   getTotalForOrder(orderId: number): number {
     const items = this.orderItems[orderId];
-
     if (items && Array.isArray(items)) {
-      return items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      return items.reduce((sum, it) => sum + it.price * it.quantity, 0);
     }
     return 0;
   }
 
-
-  loadOrderItems(orderId: number) {
-    if (!this.orderItems[orderId]) {
-      this.orderService.getItemsOrder(orderId).subscribe((items: OrderItemProduct[]) => {
-        this.orderItems[orderId] = items;
-      });
-    }
-  }
-
-  onRowExpand(event: any) {
-    const orderId = event.data.id;
-    this.loadOrderItems(orderId);
-  }
+  // Table perf
+  trackByOrderId = (_: number, o: Order) => o.id;
+  trackByItemId = (_: number, it: OrderItemProduct) => it.id ?? `${it.name}-${it.price}-${it.quantity}`;
 }
