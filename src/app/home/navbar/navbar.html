@@ -41,16 +41,50 @@
   <!-- Actions desktop uniquement -->
   <div class="hidden lg:flex items-center gap-3">
     <ng-container *ngIf="isLoggedIn; else loggedOut">
-      <!-- Logout (texte) -->
-      <button
-        pButton
-        class="p-button-text"
-        (click)="logout()"
-        [ngClass]="'text-[#262626]'">
-        <i class="pi pi-sign-out mr-2"></i>
-        Logout
-      </button>
-    </ng-container>
+        <div class="relative">
+          <button type="button"
+                  class="inline-flex items-center gap-2 px-2 py-1 rounded-lg hover:bg-gray-50 transition"
+                  (click)="accountPop.toggle($event)"
+                  aria-label="Account">
+            <p-avatar
+              *ngIf="user?.avatarUrl; else initAvatar"
+              [image]="user!.avatarUrl"
+              shape="circle"
+            ></p-avatar>
+            <ng-template #initAvatar>
+              <p-avatar [label]="initials" shape="circle" styleClass="bg-sky-600 text-white"></p-avatar>
+            </ng-template>
+            <span class="font-semibold text-[#262626] max-w-[160px] truncate">{{ displayName }}</span>
+            <i class="pi pi-angle-down text-[#262626]"></i>
+          </button>
+
+          <p-popover #accountPop>
+            <ng-template pTemplate="content">
+              <div class="min-w-[220px]">
+                <div class="flex items-center gap-3 p-3 border-b">
+                  <p-avatar [label]="initials" shape="circle" styleClass="bg-sky-600 text-white"></p-avatar>
+                  <div class="min-w-0">
+                    <div class="font-semibold truncate">{{ displayName }}</div>
+                    <div class="text-xs text-gray-500 truncate">{{ user?.email }}</div>
+                  </div>
+                </div>
+                <nav class="py-1">
+                  <a *ngIf="isAdmin" routerLink="/admin"
+                    class="flex items-center gap-2 px-3 py-2 hover:bg-gray-50 rounded transition">
+                    <i class="pi pi-shield"></i>
+                    <span>Admin</span>
+                  </a>
+                  <button class="w-full text-left flex items-center gap-2 px-3 py-2 hover:bg-gray-50 rounded transition"
+                          (click)="logout(); accountPop.hide()">
+                    <i class="pi pi-sign-out"></i>
+                    <span>Logout</span>
+                  </button>
+                </nav>
+              </div>
+            </ng-template>
+          </p-popover>
+        </div>
+      </ng-container>
 
     <ng-template #loggedOut>
       <!-- Log in (texte) -->
@@ -186,10 +220,50 @@
 
     <!-- Actions -->
     <div class="flex flex-col gap-3">
-      <ng-container *ngIf="isLoggedIn; else loggedOutM">
-        <button pButton class="p-button-outlined w-full" (click)="logout()">
-          <i class="pi pi-sign-out mr-2"></i> Logout
-        </button>
+       <ng-container *ngIf="isLoggedIn; else loggedOut">
+        <div class="relative">
+          <button type="button"
+                  class="inline-flex items-center gap-2 px-2 py-1 rounded-lg hover:bg-gray-50 transition"
+                  (click)="accountPop.toggle($event)"
+                  aria-label="Account">
+            <p-avatar
+              *ngIf="user?.avatarUrl; else initAvatar"
+              [image]="user!.avatarUrl"
+              shape="circle"
+            ></p-avatar>
+            <ng-template #initAvatar>
+              <p-avatar [label]="initials" shape="circle" styleClass="bg-sky-600 text-white"></p-avatar>
+            </ng-template>
+            <span class="font-semibold text-[#262626] max-w-[160px] truncate">{{ displayName }}</span>
+            <i class="pi pi-angle-down text-[#262626]"></i>
+          </button>
+
+          <p-popover #accountPop>
+            <ng-template pTemplate="content">
+              <div class="min-w-[220px]">
+                <div class="flex items-center gap-3 p-3 border-b">
+                  <p-avatar [label]="initials" shape="circle" styleClass="bg-sky-600 text-white"></p-avatar>
+                  <div class="min-w-0">
+                    <div class="font-semibold truncate">{{ displayName }}</div>
+                    <div class="text-xs text-gray-500 truncate">{{ user?.email }}</div>
+                  </div>
+                </div>
+                <nav class="py-1">
+                  <a *ngIf="isAdmin" routerLink="/admin"
+                    class="flex items-center gap-2 px-3 py-2 hover:bg-gray-50 rounded transition">
+                    <i class="pi pi-shield"></i>
+                    <span>Admin</span>
+                  </a>
+                  <button class="w-full text-left flex items-center gap-2 px-3 py-2 hover:bg-gray-50 rounded transition"
+                          (click)="logout(); accountPop.hide()">
+                    <i class="pi pi-sign-out"></i>
+                    <span>Logout</span>
+                  </button>
+                </nav>
+              </div>
+            </ng-template>
+          </p-popover>
+        </div>
       </ng-container>
       <ng-template #loggedOutM>
         <a routerLink="/login" pButton class="p-button-text w-full" (click)="sidebarVisible = false">
