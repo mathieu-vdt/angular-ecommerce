@@ -14,7 +14,6 @@
     </a>
   </div>
 
-  <!-- Liens CENTRÉS (desktop) -->
   <div class="hidden lg:flex p-toolbar-group-center flex-1 justify-center">
     <ul class="flex gap-8">
       <li *ngFor="let l of links"
@@ -218,9 +217,8 @@
 
     <hr class="border-surface-200" />
 
-    <!-- Actions -->
     <div class="flex flex-col gap-3">
-       <ng-container *ngIf="isLoggedIn; else loggedOut">
+      <ng-container *ngIf="isLoggedIn; else loggedOut">
         <div class="relative">
           <button type="button"
                   class="inline-flex items-center gap-2 px-2 py-1 rounded-lg hover:bg-gray-50 transition"

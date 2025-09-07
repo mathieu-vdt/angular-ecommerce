@@ -85,7 +85,7 @@ export class Navbar {
 
   links = [
     { label: 'Home', icon: 'pi pi-home', routerLink: '/' },
-    { label: 'Products', icon: 'pi pi-shopping-bag', routerLink: '/' },
+    // { label: 'Products', icon: 'pi pi-shopping-bag', routerLink: '/' },
     { label: 'Contact', icon: 'pi pi-envelope', routerLink: '/contact' },
     { label: 'FAQ', icon: 'pi pi-question-circle', routerLink: '/faq' }
   ];

@@ -1,0 +1,103 @@
+<app-navbar></app-navbar>
+
+
+<section class="relative">
+  <div class="absolute inset-0 bg-black/80"></div>
+  <div class="container mx-auto px-4 py-20 relative">
+    <h1 class="text-3xl md:text-4xl font-bold text-white text-center">Frequently Asked Questions</h1>
+    <p class="text-white/80 text-center mt-2">Find answers to common questions. Still stuck? Contact us ✉️</p>
+  </div>
+</section>
+
+
+<section class="container mx-auto px-4 background-white mt-1">
+  <div class="rounded-2xl p-4 md:p-6 shadow-xl">
+    <div class="flex flex-col md:flex-row gap-3 md:items-center">
+      <div class="flex-1 relative">
+        <i class="pi pi-search absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+        <input
+            pInputText
+            type="text"
+            placeholder="Search in FAQs…"
+            class="w-full pl-10"
+            [ngModel]="query()"   
+            (ngModelChange)="query.set($event)" 
+        />
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2">
+        <button pButton class="p-button-outlined" (click)="clearCategory()" *ngIf="activeCategory()">All</button>
+        <button
+          *ngFor="let c of categories()"
+          pButton
+          [label]="c"
+          [class.p-button-outlined]="activeCategory() !== c"
+          [class.p-button-secondary]="activeCategory() === c"
+          (click)="setCategory(c)"
+        ></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<main class="container mx-auto px-4 py-8">
+
+  <div *ngIf="filteredFaqs().length === 0" class="text-center text-gray-500 py-16">
+    No results for your search.
+    <a routerLink="/contact" class="text-sky-600 hover:underline ml-1">Contact support</a>
+  </div>
+
+
+  <div *ngIf="filteredFaqs().length > 0" class="grid grid-cols-12 gap-6">
+    <div class="col-span-12 lg:col-span-8">
+      <p-accordion [multiple]="true" [(value)]="openPanels">
+        <p-accordion-panel
+                *ngFor="let f of filteredFaqs(); index as i"
+                [value]="i"
+            >
+                <p-accordion-header>
+                <div class="flex items-start gap-3">
+                    <i class="pi pi-question-circle mt-1 text-sky-600"></i>
+                    <span class="font-semibold">{{ f.q }}</span>
+                    <p-tag *ngIf="f.category" [value]="f.category" severity="info" class="ml-auto hidden md:inline-flex"></p-tag>
+                </div>
+                </p-accordion-header>
+
+                <p-accordion-content>
+                <p class="text-gray-700 leading-relaxed">
+                    {{ f.a }}
+                </p>
+                </p-accordion-content>
+            </p-accordion-panel>
+        </p-accordion>
+
+    </div>
+
+    <!-- Sidebar aide -->
+    <aside class="col-span-12 lg:col-span-4">
+      <p-card>
+        <ng-template pTemplate="header">
+          <div class="font-semibold">Still need help?</div>
+        </ng-template>
+
+        <div class="space-y-2 text-gray-700">
+          <p>Can’t find what you’re looking for? Our team is here to help.</p>
+          <ul class="list-disc ml-5 text-sm">
+            <li>Response within 24 hours</li>
+            <li>Priority support for orders</li>
+          </ul>
+        </div>
+
+        <ng-template pTemplate="footer">
+          <div class="flex gap-2">
+            <a routerLink="/contact" pButton class="w-full">Contact us</a>
+            <a routerLink="/faq" fragment="policies" pButton class="p-button-outlined w-full">Policies</a>
+          </div>
+        </ng-template>
+      </p-card>
+    </aside>
+  </div>
+</main>
+
+<app-footer></app-footer>

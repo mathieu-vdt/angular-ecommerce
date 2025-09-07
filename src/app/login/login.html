@@ -15,8 +15,32 @@
         </div>
         <div class="field mb-4">
           <label for="password" class="block mb-2">Password</label>
-          <input id="password" type="password" pInputText formControlName="password" class="w-full glass-input" />
+
+          <div class="relative">
+            <!-- Input -->
+            <input
+              id="password"
+              [type]="showPwd ? 'text' : 'password'"
+              pInputText
+              formControlName="password"
+              class="w-full glass-input pr-10 h-11"
+              autocomplete="current-password"
+            />
+
+            <!-- Bouton œil -->
+            <button
+              type="button"
+              (click)="showPwd = !showPwd"
+              class="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
+              [attr.aria-pressed]="showPwd"
+              aria-label="Toggle password visibility"
+              title="Show/Hide password"
+            >
+              <i class="pi" [ngClass]="showPwd ? 'pi-eye-slash' : 'pi-eye'"></i>
+            </button>
+          </div>
         </div>
+
         <div class="field flex items-center mb-4">
             <p-checkbox 
                 formControlName="remember" 

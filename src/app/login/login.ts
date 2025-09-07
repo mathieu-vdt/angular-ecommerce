@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { CardModule } from 'primeng/card';
+import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
@@ -13,7 +14,7 @@ import { RouterLink } from '@angular/router';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CardModule, ReactiveFormsModule, InputTextModule, ButtonModule, CheckboxModule, ToastModule, RouterLink],
+  imports: [CardModule, ReactiveFormsModule, InputTextModule, ButtonModule, CheckboxModule, ToastModule, RouterLink, CommonModule],
   providers: [MessageService],
   templateUrl: './login.html',
   styleUrls: ['./login.scss']
@@ -21,6 +22,7 @@ import { RouterLink } from '@angular/router';
 export class Login {
   loginForm: FormGroup;
   errorMessage: string | null = null;
+  showPwd = false;
 
   constructor(private fb: FormBuilder, private authService: AuthService, private router: Router, private messageService: MessageService) {
     this.loginForm = this.fb.group({
