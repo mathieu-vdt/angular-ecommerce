@@ -10,7 +10,7 @@ import { Observable, of, forkJoin, catchError, map } from 'rxjs';
   providedIn: 'root'
 })
 export class OrderService {
-  private baseUrl = `http://localhost:8080/api/orders`;
+  private baseUrl = `https://spring-ecommerce-back.onrender.com/api/orders`;
 
   private fallbackOrders: Order[] = [];
   private fallbackItems: OrderItem[] = [];

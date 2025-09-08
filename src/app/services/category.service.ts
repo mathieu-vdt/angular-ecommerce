@@ -8,7 +8,7 @@ import { Observable, of, catchError, throwError } from 'rxjs';
   providedIn: 'root'
 })
 export class CategoryService {
-  private baseUrl = `http://localhost:8080/api/categories`;
+  private baseUrl = `https://spring-ecommerce-back.onrender.com/api/categories`;
 
   // fallback static data (used if backend fails)
   private fallback: Category[] = [];

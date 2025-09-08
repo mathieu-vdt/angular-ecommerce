@@ -164,13 +164,13 @@ private clearSelectedImage() {
         fd.append('file', this.selectedFile);
 
         // ton endpoint existant
-        const res = await this.http.post<{ url: string }>('http://localhost:8080/api/files/upload', fd, {
+        const res = await this.http.post<{ url: string }>('https://spring-ecommerce-back.onrender.com/api/files/upload', fd, {
           reportProgress: true,
           observe: 'body'
         }).toPromise();
 
         if (res?.url) {
-          this.formData.image_url = 'http://localhost:8080' + res.url;
+          this.formData.image_url = 'https://spring-ecommerce-back.onrender.com' + res.url;
         }
       }
 

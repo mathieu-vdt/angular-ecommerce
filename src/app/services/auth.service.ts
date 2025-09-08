@@ -12,7 +12,7 @@ interface AuthResponse {
 })
 export class AuthService {
 
-  private baseUrl = 'http://localhost:8080/api/auth';
+  private baseUrl = 'https://spring-ecommerce-back.onrender.com/api/auth';
 
   constructor(private http: HttpClient) { }
 

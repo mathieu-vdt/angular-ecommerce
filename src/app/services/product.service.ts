@@ -8,7 +8,7 @@ import { Product } from '../models/product.model';
   providedIn: 'root'
 })
 export class ProductService {
-  private baseUrl = `http://localhost:8080/api/products`;
+  private baseUrl = `https://spring-ecommerce-back.onrender.com/api/products`;
 
   constructor(private http: HttpClient) {}
 
